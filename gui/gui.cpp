@@ -1,24 +1,14 @@
-// Dear ImGui: standalone example application for DirectX 12
-// If you are new to Dear ImGui, read documentation from the docs/ folder + read the top of imgui.cpp.
-// Read online: https://github.com/ocornut/imgui/tree/master/docs
-// FIXME: 64-bit only for now! (Because sizeof(ImTextureId) == sizeof(void*))
-
-#include "imgui\imgui.h"
-#include "imgui_impl_win32.h"
-#include "imgui_impl_dx12.h"
 #include <d3d12.h>
 #include <dxgi1_4.h>
 #include <tchar.h>
-#include "gui.h"
 #include <d3d12.h>
-#ifdef _DEBUG
-#define DX12_ENABLE_DEBUG_LAYER
-#endif
 
-#ifdef DX12_ENABLE_DEBUG_LAYER
-#include <dxgidebug.h>
-#pragma comment(lib, "dxguid.lib")
-#endif
+#include "..\imgui\imgui.h"
+#include "..\imgui\imgui_impl_win32.h"
+#include "..\imgui\imgui_impl_dx12.h"
+#include "..\gui\gui.h"
+#include "../utility/xor.hpp"
+
 
 struct FrameContext
 {
@@ -46,6 +36,10 @@ static ID3D12Resource* g_mainRenderTargetResource[NUM_BACK_BUFFERS] = {};
 static D3D12_CPU_DESCRIPTOR_HANDLE  g_mainRenderTargetDescriptor[NUM_BACK_BUFFERS] = {};
 HWND hwnd;
 ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+
+ImFont* beyno_font_large = nullptr;
+ImFont* beyno_font_small = nullptr;
+ImFont* tit_font = nullptr;
 
 // Forward declarations of helper functions
 bool CreateDeviceD3D(HWND hWnd);
@@ -114,8 +108,7 @@ void menu_end() {
 }
 
 void menu_loop() {
-	bool show_demo_window = true;
-	bool show_another_window = false;
+	auto rgb = [](float r, float g, float b, float a) { return ImVec4(r / 255, g / 255, b / 255, a / 255); };
 
 	MSG msg;
 	ZeroMemory(&msg, sizeof(msg));
@@ -130,24 +123,29 @@ void menu_loop() {
 
 		begin_draw();
 
-		// 3. Show another simple window.
-		if (show_another_window)
+		ImGui::SetNextWindowPos(ImVec2(0, 0));
+		ImGui::SetNextWindowSize(ImVec2(700, 500));
+		static const auto flags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoTitleBar;
+		ImGui::Begin("###Overflow", 0, flags);
 		{
-			ImGui::Begin("Another Window", &show_another_window);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
-			ImGui::Text("Hello from another window!");
-			if (ImGui::Button("Close Me"))
-				show_another_window = false;
-			ImGui::End();
+			ImGui::PushFont(beyno_font_large);
+			ImGui::SetCursorPosX((690 / 2) - (ImGui::CalcTextSize("OVERFLOW").x / 2));
+			ImGui::SetCursorPosY(50);
+			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(rgb(237, 74, 74, 255)));
+			ImGui::Text("OVERFLOW");
+			ImGui::PopStyleColor();
+			ImGui::PopFont();
 		}
+		ImGui::End();
 
 		end_draw();
 	}
 }
 
 void menu_init() {
-	wc = { sizeof(WNDCLASSEX), CS_CLASSDC, WndProc, 0L, 0L, GetModuleHandle(NULL), NULL, NULL, NULL, NULL, _T("ImGui Example"), NULL };
+	wc = { sizeof(WNDCLASSEX), CS_CLASSDC, WndProc, 0L, 0L, GetModuleHandle(NULL), NULL, NULL, NULL, NULL, _T("Overflow Cheats Loader"), NULL };
 	::RegisterClassEx(&wc);
-	hwnd = ::CreateWindow(wc.lpszClassName, _T("Dear ImGui DirectX12 Example"), WS_OVERLAPPEDWINDOW, 100, 100, 1280, 800, NULL, NULL, wc.hInstance, NULL);
+	hwnd = ::CreateWindow(wc.lpszClassName, _T("Overflow Cheats Loader"), WS_OVERLAPPEDWINDOW, 100, 100, 700, 500, NULL, NULL, wc.hInstance, NULL);
 
 	if (!CreateDeviceD3D(hwnd))
 	{
@@ -164,6 +162,14 @@ void menu_init() {
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
 
 	ImGui::StyleColorsDark();
+	ImGuiStyle* style = &ImGui::GetStyle();
+	ImVec4* colors = style->Colors;
+
+	auto rgb = [](float r, float g, float b, float a) { return ImVec4(r / 255, g / 255, b / 255, a / 255); };
+
+	colors[ImGuiCol_WindowBg] = ImVec4(rgb(34, 34, 34, 255));
+	ImGui::GetStyle().WindowRounding = 0.0f;
+
 
 	ImGui_ImplWin32_Init(hwnd);
 	ImGui_ImplDX12_Init(g_pd3dDevice, NUM_FRAMES_IN_FLIGHT,
@@ -171,7 +177,9 @@ void menu_init() {
 		g_pd3dSrvDescHeap->GetCPUDescriptorHandleForHeapStart(),
 		g_pd3dSrvDescHeap->GetGPUDescriptorHandleForHeapStart());
 	//io.Fonts->AddFontDefault();
-	//io.Fonts->AddFontFromFileTTF("../../misc/fonts/Roboto-Medium.ttf", 16.0f);
+	beyno_font_large = io.Fonts->AddFontFromFileTTF("C:\\Users\\nickm\\source\\repos\\OverflowClient\\fonts\\TITILLUN.ttf", 120.0f);
+	beyno_font_small = io.Fonts->AddFontFromFileTTF("C:\\Users\\nickm\\source\\repos\\OverflowClient\\fonts\\TITILLUN.ttf", 60.0f);
+	tit_font = io.Fonts->AddFontFromFileTTF("C:\\Users\\nickm\\source\\repos\\OverflowClient\\fonts\\TITILLUN.ttf", 16.0f);
 	//io.Fonts->AddFontFromFileTTF("../../misc/fonts/Cousine-Regular.ttf", 15.0f);
 	//io.Fonts->AddFontFromFileTTF("../../misc/fonts/DroidSans.ttf", 16.0f);
 	//io.Fonts->AddFontFromFileTTF("../../misc/fonts/ProggyTiny.ttf", 10.0f);

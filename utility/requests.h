@@ -12,7 +12,7 @@ static size_t write_call_back(void* contents, size_t size, size_t nmemb, void* u
 
 std::string get_request(std::string url, std::string payload = "") {
 	CURL* curl;
-	CURLcode res;
+	CURLcode res{};
 	std::string read_buffer;
 
 	if (!payload.empty())
@@ -30,10 +30,9 @@ std::string get_request(std::string url, std::string payload = "") {
 	return read_buffer;
 }
 
-std::string post_request(std::string url, std::string payload) {
+bool post_request(const std::string& url, const std::string& payload, std::string* read_buffer = nullptr) {
 	CURL* curl;
-	CURLcode res;
-	std::string read_buffer;
+	CURLcode res{};
 
 	curl_global_init(CURL_GLOBAL_ALL);
 
@@ -41,8 +40,11 @@ std::string post_request(std::string url, std::string payload) {
 	if (curl) {
 		curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
 		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, payload.c_str());
-		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_call_back);
-		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &read_buffer);
+
+		if (read_buffer) {
+			curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_call_back);
+			curl_easy_setopt(curl, CURLOPT_WRITEDATA, read_buffer);
+		}
 
 		res = curl_easy_perform(curl);
 		curl_easy_cleanup(curl);
@@ -50,14 +52,14 @@ std::string post_request(std::string url, std::string payload) {
 	curl_global_cleanup();
 
 	if (res == CURLE_OK)
-		return read_buffer;
+		return true;
 	else
-		return NULL;
+		return false;
 }
 
-bool post_request_file(std::string url, std::string file_path) {
+bool post_request_file(const std::string& url, const std::string& file_path) {
 	CURL* curl;
-	CURLcode res;
+	CURLcode res{};
 
 	curl_global_init(CURL_GLOBAL_ALL);
 
