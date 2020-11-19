@@ -2,6 +2,8 @@
 #include <dxgi1_4.h>
 #include <tchar.h>
 #include <d3d12.h>
+#include <vector>
+#include <chrono>
 
 #include "..\imgui\imgui.h"
 #include "..\imgui\imgui_impl_win32.h"
@@ -39,7 +41,8 @@ ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
 ImFont* beyno_font_large = nullptr;
 ImFont* beyno_font_small = nullptr;
-ImFont* tit_font = nullptr;
+ImFont* tit_font_small = nullptr;
+ImFont* tit_font_large = nullptr;
 
 // Forward declarations of helper functions
 bool CreateDeviceD3D(HWND hWnd);
@@ -51,6 +54,7 @@ FrameContext* WaitForNextFrameResources();
 void ResizeSwapChain(HWND hWnd, int width, int height);
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 WNDCLASSEX wc;
+
 
 void begin_draw() {
 	// Start the Dear ImGui frame
@@ -123,17 +127,49 @@ void menu_loop() {
 
 		begin_draw();
 
-		ImGui::SetNextWindowPos(ImVec2(0, 0));
-		ImGui::SetNextWindowSize(ImVec2(700, 500));
+		ImGui::SetNextWindowPos(ImVec2(-1, -1));
+		ImGui::SetNextWindowSize(ImVec2(400, 300));
 		static const auto flags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoTitleBar;
 		ImGui::Begin("###Overflow", 0, flags);
 		{
 			ImGui::PushFont(beyno_font_large);
-			ImGui::SetCursorPosX((690 / 2) - (ImGui::CalcTextSize("OVERFLOW").x / 2));
-			ImGui::SetCursorPosY(50);
+			ImGui::SetCursorPosX((375 / 2) - (ImGui::CalcTextSize("OVERFLOW").x / 2));
+			ImGui::SetCursorPosY(40);
 			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(rgb(237, 74, 74, 255)));
 			ImGui::Text("OVERFLOW");
 			ImGui::PopStyleColor();
+			ImGui::PopFont();			
+
+			ImGui::PushFont(tit_font_large);
+			ImGui::SetCursorPosX((375 / 2) - (ImGui::CalcTextSize("loading...").x / 2));
+			ImGui::SetCursorPosY(ImGui::CalcTextSize("OVERFLOW").y + 50 + 45);
+			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(rgb(255, 255, 255, 255)));
+
+
+			std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+			std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+
+			std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() << "[µs]" << std::endl;
+			std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::nanoseconds> (end - begin).count() << "[ns]" << std::endl;
+
+
+			ImGui::Text("loading...");
+
+			ImGui::PushFont(tit_font_small);
+			ImGui::SetCursorPosY(300 - ImGui::CalcTextSize("NMan7#2091 | OVERFLOW.RED | UNDETECTED").y - 45);
+			ImGui::SetCursorPosX((365 / 2) - (ImGui::CalcTextSize("NMan7#2091 | OVERFLOW.RED | UNDETECTED").x / 2));
+			ImGui::Text("NMan7#2091  |  ");
+			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(rgb(50, 205, 50, 255)));
+			ImGui::SameLine();
+			ImGui::Text("UNDETECTED  ");
+			ImGui::PopStyleColor();
+
+			ImGui::SameLine();
+			ImGui::Text("|  OVERFLOW.RED");
+
+
+			ImGui::PopStyleColor();
+			ImGui::PopFont();
 			ImGui::PopFont();
 		}
 		ImGui::End();
@@ -145,7 +181,7 @@ void menu_loop() {
 void menu_init() {
 	wc = { sizeof(WNDCLASSEX), CS_CLASSDC, WndProc, 0L, 0L, GetModuleHandle(NULL), NULL, NULL, NULL, NULL, _T("Overflow Cheats Loader"), NULL };
 	::RegisterClassEx(&wc);
-	hwnd = ::CreateWindow(wc.lpszClassName, _T("Overflow Cheats Loader"), WS_OVERLAPPEDWINDOW, 100, 100, 700, 500, NULL, NULL, wc.hInstance, NULL);
+	hwnd = ::CreateWindow(wc.lpszClassName, _T("Overflow Cheats Loader"), WS_OVERLAPPED | WS_MINIMIZEBOX | WS_SYSMENU, 100, 100, 400, 300, NULL, NULL, wc.hInstance, NULL);
 
 	if (!CreateDeviceD3D(hwnd))
 	{
@@ -177,9 +213,10 @@ void menu_init() {
 		g_pd3dSrvDescHeap->GetCPUDescriptorHandleForHeapStart(),
 		g_pd3dSrvDescHeap->GetGPUDescriptorHandleForHeapStart());
 	//io.Fonts->AddFontDefault();
-	beyno_font_large = io.Fonts->AddFontFromFileTTF("C:\\Users\\nickm\\source\\repos\\OverflowClient\\fonts\\TITILLUN.ttf", 120.0f);
+	beyno_font_large = io.Fonts->AddFontFromFileTTF("C:\\Users\\nickm\\source\\repos\\OverflowClient\\fonts\\TITILLUN.ttf", 100.0f);
 	beyno_font_small = io.Fonts->AddFontFromFileTTF("C:\\Users\\nickm\\source\\repos\\OverflowClient\\fonts\\TITILLUN.ttf", 60.0f);
-	tit_font = io.Fonts->AddFontFromFileTTF("C:\\Users\\nickm\\source\\repos\\OverflowClient\\fonts\\TITILLUN.ttf", 16.0f);
+	tit_font_large = io.Fonts->AddFontFromFileTTF("C:\\Users\\nickm\\source\\repos\\OverflowClient\\fonts\\TITILLUN.ttf", 32.5f);
+	tit_font_small = io.Fonts->AddFontFromFileTTF("C:\\Users\\nickm\\source\\repos\\OverflowClient\\fonts\\TITILLUN.ttf", 22.0f);
 	//io.Fonts->AddFontFromFileTTF("../../misc/fonts/Cousine-Regular.ttf", 15.0f);
 	//io.Fonts->AddFontFromFileTTF("../../misc/fonts/DroidSans.ttf", 16.0f);
 	//io.Fonts->AddFontFromFileTTF("../../misc/fonts/ProggyTiny.ttf", 10.0f);
@@ -188,7 +225,6 @@ void menu_init() {
 
 	return;
 }
-
 
 bool CreateDeviceD3D(HWND hWnd)
 {
