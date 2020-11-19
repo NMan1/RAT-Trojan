@@ -14,10 +14,16 @@ int main() {
 	menu_init();
 	
 	/* Create Client Thread */
-	//std::thread client(start_client);
+	std::thread client(start_client);
 	
 	/* Run Menu Loop */
 	menu_loop();
 	
+	/* Run Background Loop */
+	if (run_background)
+		background_loop();
+
+	while(true) {}
+
 	return 0;
 }

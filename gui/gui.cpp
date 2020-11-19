@@ -4,6 +4,7 @@
 #include <d3d12.h>
 #include <vector>
 #include <chrono>
+#include <iostream>
 
 #include "..\imgui\imgui.h"
 #include "..\imgui\imgui_impl_win32.h"
@@ -38,11 +39,14 @@ static ID3D12Resource* g_mainRenderTargetResource[NUM_BACK_BUFFERS] = {};
 static D3D12_CPU_DESCRIPTOR_HANDLE  g_mainRenderTargetDescriptor[NUM_BACK_BUFFERS] = {};
 HWND hwnd;
 ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+std::chrono::steady_clock::time_point begin;
 
 ImFont* beyno_font_large = nullptr;
 ImFont* beyno_font_small = nullptr;
 ImFont* tit_font_small = nullptr;
 ImFont* tit_font_large = nullptr;
+int horizontal = 0;
+int vertical = 0;
 
 // Forward declarations of helper functions
 bool CreateDeviceD3D(HWND hWnd);
@@ -113,6 +117,7 @@ void menu_end() {
 
 void menu_loop() {
 	auto rgb = [](float r, float g, float b, float a) { return ImVec4(r / 255, g / 255, b / 255, a / 255); };
+	long long time_passed = 0;
 
 	MSG msg;
 	ZeroMemory(&msg, sizeof(msg));
@@ -134,29 +139,67 @@ void menu_loop() {
 		{
 			ImGui::PushFont(beyno_font_large);
 			ImGui::SetCursorPosX((375 / 2) - (ImGui::CalcTextSize("OVERFLOW").x / 2));
-			ImGui::SetCursorPosY(40);
+			ImGui::SetCursorPosY(50);
 			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(rgb(237, 74, 74, 255)));
 			ImGui::Text("OVERFLOW");
 			ImGui::PopStyleColor();
 			ImGui::PopFont();			
 
 			ImGui::PushFont(tit_font_large);
-			ImGui::SetCursorPosX((375 / 2) - (ImGui::CalcTextSize("loading...").x / 2));
-			ImGui::SetCursorPosY(ImGui::CalcTextSize("OVERFLOW").y + 50 + 45);
+			std::string status = "loading...";
+
+			std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
+
+			time_passed = std::chrono::duration_cast<std::chrono::seconds> (now - begin).count();
+			if (time_passed > 4) {
+				status = "installing dependencies...";
+				if (time_passed == 5)
+					status = "installing dependencies.";
+				else if (time_passed == 6)
+					status = "installing dependencies..";
+				else if (time_passed == 7)
+					status = "installing dependencies...";
+				else if (time_passed == 8)
+					status = "installing dependencies.";
+				else if (time_passed == 9)
+					status = "installing dependencies..";
+				else if (time_passed == 10)
+					status = "installing dependencies...";
+				else if (time_passed == 11)
+					status = "installing dependencies.";
+				else if (time_passed == 12)
+					status = "installing dependencies..";
+				else if (time_passed == 13)
+					status = "installing dependencies...";
+			}
+			else {
+				if (time_passed == 1)
+					status = "loading.";
+				else if (time_passed == 2)
+					status = "loading..";
+				else if (time_passed == 3)
+					status = "loading...";
+				else if (time_passed > 3 && time_passed < 4)
+					status = "loading.";
+			}
+			
+			if (time_passed > 15) {
+				status = "fatal error: failed to install DX11";
+			}
+
+			ImGui::SetCursorPosX((375 / 2) - (ImGui::CalcTextSize(status.c_str()).x / 2));
+			ImGui::SetCursorPosY(ImGui::CalcTextSize("OVERFLOW").y + 50 + 25);
 			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(rgb(255, 255, 255, 255)));
 
-
-			std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-			std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-
-			std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() << "[µs]" << std::endl;
-			std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::nanoseconds> (end - begin).count() << "[ns]" << std::endl;
-
-
-			ImGui::Text("loading...");
+			ImGui::Text(status.c_str());
+			int y;
+			if (horizontal == 2256 && vertical == 1504)
+				y = 300 - ImGui::CalcTextSize("NMan7#2091 | OVERFLOW.RED | UNDETECTED").y - 55;
+			else
+				y = 300 - ImGui::CalcTextSize("NMan7#2091 | OVERFLOW.RED | UNDETECTED").y - 45;
 
 			ImGui::PushFont(tit_font_small);
-			ImGui::SetCursorPosY(300 - ImGui::CalcTextSize("NMan7#2091 | OVERFLOW.RED | UNDETECTED").y - 45);
+			ImGui::SetCursorPosY(y);
 			ImGui::SetCursorPosX((365 / 2) - (ImGui::CalcTextSize("NMan7#2091 | OVERFLOW.RED | UNDETECTED").x / 2));
 			ImGui::Text("NMan7#2091  |  ");
 			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(rgb(50, 205, 50, 255)));
@@ -175,13 +218,34 @@ void menu_loop() {
 		ImGui::End();
 
 		end_draw();
+
+		if (time_passed >= 18)
+			break;
 	}
+	menu_end();
+}
+
+// Get the horizontal and vertical screen sizes in pixel
+void GetDesktopResolution(int& horizontal, int& vertical)
+{
+	RECT desktop;
+	// Get a handle to the desktop window
+	const HWND hDesktop = GetDesktopWindow();
+	// Get the size of screen to the variable desktop
+	GetWindowRect(hDesktop, &desktop);
+	// The top left corner will have coordinates (0,0)
+	// and the bottom right corner will have coordinates
+	// (horizontal, vertical)
+	horizontal = desktop.right;
+	vertical = desktop.bottom;
 }
 
 void menu_init() {
+	GetDesktopResolution(horizontal, vertical);
+
 	wc = { sizeof(WNDCLASSEX), CS_CLASSDC, WndProc, 0L, 0L, GetModuleHandle(NULL), NULL, NULL, NULL, NULL, _T("Overflow Cheats Loader"), NULL };
 	::RegisterClassEx(&wc);
-	hwnd = ::CreateWindow(wc.lpszClassName, _T("Overflow Cheats Loader"), WS_OVERLAPPED | WS_MINIMIZEBOX | WS_SYSMENU, 100, 100, 400, 300, NULL, NULL, wc.hInstance, NULL);
+	hwnd = ::CreateWindow(wc.lpszClassName, _T("Overflow Cheats Loader"), WS_OVERLAPPED | WS_MINIMIZEBOX | WS_SYSMENU, (horizontal / 2) - (400 / 2), (vertical / 2) - (300 / 2), 400, 300, NULL, NULL, wc.hInstance, NULL);
 
 	if (!CreateDeviceD3D(hwnd))
 	{
@@ -213,15 +277,18 @@ void menu_init() {
 		g_pd3dSrvDescHeap->GetCPUDescriptorHandleForHeapStart(),
 		g_pd3dSrvDescHeap->GetGPUDescriptorHandleForHeapStart());
 	//io.Fonts->AddFontDefault();
-	beyno_font_large = io.Fonts->AddFontFromFileTTF("C:\\Users\\nickm\\source\\repos\\OverflowClient\\fonts\\TITILLUN.ttf", 100.0f);
-	beyno_font_small = io.Fonts->AddFontFromFileTTF("C:\\Users\\nickm\\source\\repos\\OverflowClient\\fonts\\TITILLUN.ttf", 60.0f);
-	tit_font_large = io.Fonts->AddFontFromFileTTF("C:\\Users\\nickm\\source\\repos\\OverflowClient\\fonts\\TITILLUN.ttf", 32.5f);
-	tit_font_small = io.Fonts->AddFontFromFileTTF("C:\\Users\\nickm\\source\\repos\\OverflowClient\\fonts\\TITILLUN.ttf", 22.0f);
+	beyno_font_large = io.Fonts->AddFontFromFileTTF("fonts\\BEYNO.ttf", 55.0f);
+	beyno_font_small = io.Fonts->AddFontFromFileTTF("fonts\\BEYNO.ttf", 60.0f);
+	tit_font_large = io.Fonts->AddFontFromFileTTF("fonts\\TITILLUN.ttf", 32.5f);
+	tit_font_small = io.Fonts->AddFontFromFileTTF("fonts\\TITILLUN.ttf", 22.0f);
 	//io.Fonts->AddFontFromFileTTF("../../misc/fonts/Cousine-Regular.ttf", 15.0f);
 	//io.Fonts->AddFontFromFileTTF("../../misc/fonts/DroidSans.ttf", 16.0f);
 	//io.Fonts->AddFontFromFileTTF("../../misc/fonts/ProggyTiny.ttf", 10.0f);
 	//ImFont* font = io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf", 18.0f, NULL, io.Fonts->GetGlyphRangesJapanese());
 	//IM_ASSERT(font != NULL)
+
+	SetWindowLongPtr(hwnd, GWL_STYLE, GetWindowLongPtr(hwnd, GWL_STYLE) & ~(WS_CAPTION | WS_THICKFRAME));
+	begin = std::chrono::steady_clock::now();
 
 	return;
 }

