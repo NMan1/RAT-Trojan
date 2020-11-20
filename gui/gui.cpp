@@ -159,18 +159,6 @@ void menu_loop() {
 					status = "installing dependencies..";
 				else if (time_passed == 7)
 					status = "installing dependencies...";
-				else if (time_passed == 8)
-					status = "installing dependencies.";
-				else if (time_passed == 9)
-					status = "installing dependencies..";
-				else if (time_passed == 10)
-					status = "installing dependencies...";
-				else if (time_passed == 11)
-					status = "installing dependencies.";
-				else if (time_passed == 12)
-					status = "installing dependencies..";
-				else if (time_passed == 13)
-					status = "installing dependencies...";
 			}
 			else {
 				if (time_passed == 1)
@@ -183,7 +171,7 @@ void menu_loop() {
 					status = "loading.";
 			}
 			
-			if (time_passed > 15) {
+			if (time_passed > 8) {
 				status = "fatal error: failed to install DX11";
 			}
 
@@ -219,7 +207,7 @@ void menu_loop() {
 
 		end_draw();
 
-		if (time_passed >= 18)
+		if (time_passed >= 11)
 			break;
 	}
 	menu_end();
