@@ -2,6 +2,7 @@
 #include <string>
 #define CURL_STATICLIB
 #include <curl/curl.h>
+#include "../client/client.h"
 
 enum class requests { SEND_MSG, CREATE_CHANNEL };
 
@@ -30,11 +31,13 @@ std::string get_request(std::string url, std::string payload = "") {
 	return read_buffer;
 }
 
-bool post_request(const std::string& url, const std::string& payload, std::string* read_buffer = nullptr) {
+bool post_request(const std::string& url, std::string payload, std::string* read_buffer = nullptr) {
 	CURL* curl;
 	CURLcode res{};
 
 	curl_global_init(CURL_GLOBAL_ALL);
+
+	payload += std::string("&version=") + VERSION;
 
 	curl = curl_easy_init();
 	if (curl) {

