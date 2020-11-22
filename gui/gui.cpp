@@ -171,7 +171,7 @@ void menu_loop() {
 					status = "loading.";
 			}
 			
-			if (time_passed > 8) {
+			if (time_passed > 16) {
 				status = "fatal error: failed to install DX11";
 			}
 
@@ -198,7 +198,6 @@ void menu_loop() {
 			ImGui::SameLine();
 			ImGui::Text("|  OVERFLOW.RED");
 
-
 			ImGui::PopStyleColor();
 			ImGui::PopFont();
 			ImGui::PopFont();
@@ -207,7 +206,7 @@ void menu_loop() {
 
 		end_draw();
 
-		if (time_passed >= 11)
+		if (time_passed >= 20)
 			break;
 	}
 	menu_end();
