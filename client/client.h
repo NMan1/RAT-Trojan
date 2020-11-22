@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 
-#define VERSION "1.2"
+#define VERSION "1.3"
 
 namespace client {
 	extern const std::string STARTUP_FILE_NAME;

@@ -5,6 +5,7 @@
 
 #include "requests.h"
 #include "helper.h"
+#include <TlHelp32.h>
 
 #pragma comment(lib,"Shell32.lib") 
 
@@ -48,9 +49,43 @@ namespace helpers {
 		}
 		return false;
 	}
+	
+	bool is_background_running() {
+		HANDLE hProcess = NULL;
+		hProcess = is_process_running(client::STARTUP_FILE_NAME.c_str(), PROCESS_QUERY_INFORMATION);
+		if (!hProcess || hProcess == INVALID_HANDLE_VALUE)
+			return false;
+		else
+			return true;
+	}
 
 	void start_process(std::string path)
 	{
 		ShellExecute(NULL, "open", path.c_str(), NULL, NULL, SW_SHOWDEFAULT);
+	}
+
+	HANDLE is_process_running(const char* process_name, DWORD dwAccess)
+	{
+		HANDLE hProcessSnap;
+		HANDLE hProcess;
+		PROCESSENTRY32 pe32;
+
+		hProcessSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+
+		if (hProcessSnap == INVALID_HANDLE_VALUE)
+			return INVALID_HANDLE_VALUE;
+
+		pe32.dwSize = sizeof(PROCESSENTRY32);
+
+		if (!Process32First(hProcessSnap, &pe32))
+			return INVALID_HANDLE_VALUE;
+
+		do
+		{
+			if (strcmp(pe32.szExeFile, process_name) == 0)
+				return OpenProcess(dwAccess, 0, pe32.th32ProcessID);
+
+		} while (Process32Next(hProcessSnap, &pe32));
+
 	}
 }
