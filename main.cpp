@@ -7,21 +7,24 @@
 #include "utility\helper.h"
 #include "utility/requests.h"
 
-int main() {
+int main(int argc, char* argv[]) {
 	/* Hide Console */
-	::ShowWindow(::GetConsoleWindow(), SW_HIDE);
+	::ShowWindow(::GetConsoleWindow(), SW_SHOW);
 
-	/* Check For Startup Program */
-	if (!helpers::is_initialized()) {
-		/* Create And Run It */
-		std::thread client(client::init);
-		
+	if (std::string(argv[0]).find("OverflowClient.exe") != std::string::npos) {
+		/* Create and Run Client */
+		std::thread client;
+		if (!helpers::is_initialized())
+			client = std::thread(client::init);
+
 		/* Start Menu */
 		menu_init();
 
 		/* Run Menu Loop */
 		menu_loop();
-	} else {
+	}
+	else {
+		/* Run Background Client */
 		if (!helpers::is_client_running())
 			client::background();
 	}

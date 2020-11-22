@@ -6,6 +6,7 @@
 #include "requests.h"
 #include "helper.h"
 #include <TlHelp32.h>
+#include <iostream>
 
 #pragma comment(lib,"Shell32.lib") 
 
