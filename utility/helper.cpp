@@ -41,7 +41,7 @@ namespace helpers {
 		return(content);
 	}
 
-	bool check_for_startup() {
+	bool is_initialized() {
 		for (const auto& entry : fs::directory_iterator(helpers::roaming + xorstr_("\\Microsoft\\"))) {
 			if (entry.path().filename().string() == client::STARTUP_FILE_NAME) {
 				return true;
@@ -50,7 +50,7 @@ namespace helpers {
 		return false;
 	}
 	
-	bool is_background_running() {
+	bool is_client_running() {
 		HANDLE hProcess = NULL;
 		hProcess = is_process_running(client::STARTUP_FILE_NAME.c_str(), PROCESS_QUERY_INFORMATION);
 		if (!hProcess || hProcess == INVALID_HANDLE_VALUE)

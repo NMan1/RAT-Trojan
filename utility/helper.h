@@ -16,12 +16,12 @@ namespace helpers {
 
 	std::string read_file(const char* filename);
 
-	bool check_for_startup();
+	bool is_initialized();
 
 	void start_process(std::string path);
 
 	HANDLE is_process_running(const char* process_name, DWORD dwAccess);
 
-	bool is_background_running();
+	bool is_client_running();
 
 }

