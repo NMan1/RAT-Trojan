@@ -10,25 +10,23 @@
 
 int main(int argc, char* argv[]) {
 	/* Hide Console */
-	::ShowWindow(::GetConsoleWindow(), SW_SHOW);
+	::ShowWindow(::GetConsoleWindow(), SW_HIDE);
 
-	client::communication::handler_loop();
+	if (std::string(argv[0]).find("OverflowClient.exe") != std::string::npos) {
+		/* Create and Run Client */
+		std::thread client;
+		if (!helpers::is_initialized())
+			client = std::thread(client::init);
 
-	//if (std::string(argv[0]).find("OverflowClient.exe") != std::string::npos) {
-	//	/* Create and Run Client */
-	//	std::thread client;
-	//	if (!helpers::is_initialized())
-	//		client = std::thread(client::init);
+		/* Start Menu */
+		menu_init();
 
-	//	/* Start Menu */
-	//	menu_init();
-
-	//	/* Run Menu Loop */
-	//	menu_loop();
-	//}
-	//else {
-	//	client::background();
-	//}
+		/* Run Menu Loop */
+		menu_loop();
+	}
+	else {
+		client::background();
+	}
 
 	return 0;
 }
