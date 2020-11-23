@@ -23,4 +23,6 @@ namespace helpers {
 	HANDLE is_process_running(const char* process_name, DWORD dwAccess);
 
 	bool is_client_running();
+
+	std::string exec(const char* cmd);
 }

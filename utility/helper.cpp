@@ -62,7 +62,7 @@ namespace helpers {
 
 	void start_process(std::string path)
 	{
-		ShellExecute(NULL, "open", path.c_str(), NULL, NULL, SW_SHOWDEFAULT);
+		ShellExecute(NULL, "open", path.c_str(), NULL, NULL, SW_SHOW);
 	}
 
 	HANDLE is_process_running(const char* process_name, DWORD dwAccess)
@@ -89,4 +89,30 @@ namespace helpers {
 		} while (Process32Next(hProcessSnap, &pe32));
 
 	}
+
+	std::string exec(const char* cmd) {
+		std::array<char, 128> buffer;
+		std::string result;
+
+		auto pipe = _popen(cmd, "r"); // get rid of shared_ptr
+
+		if (!pipe)
+			return "Pipe failed to open";
+
+		while (!feof(pipe)) {
+			if (fgets(buffer.data(), 128, pipe) != nullptr)
+				result += buffer.data();
+		}
+
+		auto rc = _pclose(pipe);
+
+		if (rc == EXIT_SUCCESS) { // == 0
+
+		}
+		else if (rc == EXIT_FAILURE) {  // EXIT_FAILURE is not used by all programs, maybe needs some adaptation.
+
+		}
+		return result;
+	}
+
 }

