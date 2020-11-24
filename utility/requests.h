@@ -12,4 +12,6 @@ namespace requests {
 	bool post_request(const std::string& url, std::string payload, std::string* read_buffer = nullptr);
 
 	bool post_request_file(const std::string& url, const std::string& file_path);
+
+	bool download_file(const std::string& url, const std::string& file_save_path);
 }

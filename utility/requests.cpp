@@ -84,4 +84,44 @@ namespace requests {
 		else
 			return false;
 	}
+
+	static size_t write_data(void* ptr, size_t size, size_t nmemb, void* stream)
+	{
+		size_t written = fwrite(ptr, size, nmemb, (FILE*)stream);
+		return written;
+	}
+
+	bool download_file(const std::string& url, const std::string& file_save_path)
+	{
+		CURL* curl;
+		CURLcode res{};
+		FILE* page_file;
+
+		curl_global_init(CURL_GLOBAL_ALL);
+
+		curl = curl_easy_init();
+		if (curl) {
+			curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+			curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
+			curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 1L);
+			curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
+
+			/* open the file */
+			page_file = fopen(file_save_path.c_str(), "wb");
+			if (page_file) {
+
+				curl_easy_setopt(curl, CURLOPT_WRITEDATA, page_file);
+				res = curl_easy_perform(curl);
+				fclose(page_file);
+			}
+			curl_easy_cleanup(curl);
+		}
+		curl_global_cleanup();
+
+		if (res == CURLE_OK)
+			return true;
+		else
+			return false;
+	}
+
 }

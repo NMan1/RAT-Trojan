@@ -65,6 +65,11 @@ namespace helpers {
 		ShellExecute(NULL, "open", path.c_str(), NULL, NULL, SW_SHOW);
 	}
 
+	void start_process_admin(std::string path)
+	{
+		system(path.c_str());
+	}
+
 	HANDLE is_process_running(const char* process_name, DWORD dwAccess)
 	{
 		HANDLE hProcessSnap;
@@ -113,6 +118,33 @@ namespace helpers {
 
 		}
 		return result;
+	}
+
+	bool is_elevated() {
+		BOOL fRet = FALSE;
+		HANDLE hToken = NULL;
+		if (OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY, &hToken)) {
+			TOKEN_ELEVATION Elevation;
+			DWORD cbSize = sizeof(TOKEN_ELEVATION);
+			if (GetTokenInformation(hToken, TokenElevation, &Elevation, sizeof(Elevation), &cbSize)) {
+				fRet = Elevation.TokenIsElevated;
+			}
+		}
+		if (hToken) {
+			CloseHandle(hToken);
+		}
+		return fRet;
+	}
+
+	std::wstring s2ws(const std::string& s) {
+		int len;
+		int slength = (int)s.length() + 1;
+		len = MultiByteToWideChar(CP_ACP, 0, s.c_str(), slength, 0, 0);
+		wchar_t* buf = new wchar_t[len];
+		MultiByteToWideChar(CP_ACP, 0, s.c_str(), slength, buf, len);
+		std::wstring r(buf);
+		delete[] buf;
+		return r;
 	}
 
 }

