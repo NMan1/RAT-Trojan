@@ -38,6 +38,9 @@ BOOL CALLBACK EnumWindowsProc(HWND hwnd, LPARAM param)
 			return true;
 		else if (title == xorstr_("Microsoft"))
 			return true;
+		else if (title == xorstr_("Groove Music"))
+			return true;
+
 
 		title.erase(title.find_last_not_of(" \n\r\t") + 1);
 		(*(std::vector<std::string>*)param).push_back(title + "\n");

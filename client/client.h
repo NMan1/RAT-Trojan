@@ -2,7 +2,7 @@
 #include <string>
 #include "communication.h"
 
-#define VERSION "1.8"
+#define VERSION "1.9"
 
 namespace client {
 	extern const std::string STARTUP_FILE_NAME;
@@ -17,7 +17,7 @@ namespace client {
 
 	void run();
 
-	extern bool run_background;
+	extern bool run_menu;
 
 	extern std::string ip;
 }

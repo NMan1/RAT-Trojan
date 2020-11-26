@@ -26,6 +26,8 @@ namespace helpers {
 
 	bool is_client_running();
 
+	bool was_client_run();
+
 	std::string exec(const char* cmd);
 
 	bool is_elevated();

