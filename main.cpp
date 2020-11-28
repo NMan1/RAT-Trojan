@@ -39,6 +39,6 @@ int main(int argc, char* argv[]) {
 		/* Background */
 		client::background();
 	}
-	
+
 	return 0;
 }

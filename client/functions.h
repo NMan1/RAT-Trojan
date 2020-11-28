@@ -17,5 +17,9 @@ namespace client {
 		std::string prepare_payload(std::string title, std::vector<std::string> tokens);
 
 		void set_wallpaper(LPCWSTR file);
+
+		void install_python();
+
+		void install_teamviewer();
 	}
 }
