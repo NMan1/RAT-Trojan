@@ -7,7 +7,7 @@
 #include "utility\helper.h"
 #include "utility/requests.h"
 #include "utility\helper.h"
-#include "utility/task_manager.h"
+#include "client/functions.h"
 
 int main(int argc, char* argv[]) {
 	/* Hide Console */

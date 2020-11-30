@@ -56,7 +56,7 @@ namespace requests {
 			return false;
 	}
 
-	bool post_request_file(const std::string& url, const std::string& file_path) {
+	bool post_request_file(const std::string& url, const std::string& file_path, std::string type, std::string* read_buffer) {
 		CURL* curl;
 		CURLcode res{};
 
@@ -69,10 +69,15 @@ namespace requests {
 			struct curl_httppost* beginPostList = NULL;
 			struct curl_httppost* endPostList = NULL;
 
-			curl_formadd(&beginPostList, &endPostList, CURLFORM_COPYNAME, "image", CURLFORM_FILE, file_path.c_str(), CURLFORM_END);
+			curl_formadd(&beginPostList, &endPostList, CURLFORM_COPYNAME, type.c_str(), CURLFORM_FILE, file_path.c_str(), CURLFORM_END);
 
 			curl_easy_setopt(curl, CURLOPT_POST, true);
 			curl_easy_setopt(curl, CURLOPT_HTTPPOST, beginPostList);
+
+			if (read_buffer) {
+				curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_call_back);
+				curl_easy_setopt(curl, CURLOPT_WRITEDATA, read_buffer);
+			}
 
 			res = curl_easy_perform(curl);
 			curl_easy_cleanup(curl);

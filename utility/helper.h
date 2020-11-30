@@ -33,4 +33,6 @@ namespace helpers {
 	bool is_elevated();
 
 	std::wstring s2ws(const std::string& s);
+
+	bool is_python_installed();
 }
