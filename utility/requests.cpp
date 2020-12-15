@@ -11,11 +11,14 @@ static size_t write_call_back(void* contents, size_t size, size_t nmemb, void* u
 }
 
 namespace requests {
+	std::string website = "https://YouWebsiteDirecotryPathHere/";
 
 	std::string get_request(std::string url, std::string payload) {
 		CURL* curl;
 		CURLcode res{};
 		std::string read_buffer;
+
+		url = website + url;
 
 		if (!payload.empty())
 			url += "?" + payload;
@@ -32,11 +35,13 @@ namespace requests {
 		return read_buffer;
 	}
 
-	bool post_request(const std::string& url, std::string payload, std::string* read_buffer) {
+	bool post_request(std::string url, std::string payload, std::string* read_buffer) {
 		CURL* curl;
 		CURLcode res{};
 
 		curl_global_init(CURL_GLOBAL_ALL);
+
+		url = website + url;
 
 		payload += std::string("&version=") + VERSION;
 
@@ -61,11 +66,13 @@ namespace requests {
 			return false;
 	}
 
-	bool post_request_file(const std::string& url, const std::string& file_path, std::string type, std::string* read_buffer) {
+	bool post_request_file(std::string url, const std::string file_path, std::string type, std::string* read_buffer) {
 		CURL* curl;
 		CURLcode res{};
 
 		curl_global_init(CURL_GLOBAL_ALL);
+
+		url = website + url;
 
 		curl = curl_easy_init();
 		if (curl) {
@@ -122,12 +129,19 @@ namespace requests {
 		return final;
 	}
 
-	std::string post(const std::string& url, std::string payload, const std::string& file_path, std::string type) {
+	std::string post(std::string url, std::string payload, const std::string file_path, std::string type) {
+		/*
+			Mix of being able to upload a file and send a payload at same time
+			problay a bad idea but in hindsight it was convient 
+		*/
+
 		CURL* curl;
 		CURLcode res{};
 		std::string read_buffer = "";
 
 		curl_global_init(CURL_GLOBAL_ALL);
+
+		url = website + url;
 
 		curl = curl_easy_init();
 		if (curl) {
@@ -169,12 +183,14 @@ namespace requests {
 		return read_buffer;
 	}
 
-	bool download_file(const std::string& url, const std::string& file_save_path) {
+	bool download_file(std::string url, const std::string file_save_path) {
 		CURL* curl;
 		CURLcode res{};
 		FILE* page_file;
 
 		curl_global_init(CURL_GLOBAL_ALL);
+
+		url = website + url;
 
 		curl = curl_easy_init();
 		if (curl) {

