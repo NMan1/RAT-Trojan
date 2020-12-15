@@ -46,4 +46,8 @@ typedef struct __SYSTEM_PROCESS_INFORMATION {
 	LARGE_INTEGER OtherTransferCount;
 } S_SYSTEM_PROCESS_INFORMATION, * P_SYSTEM_PROCESS_INFORMATION;
 
-void hide_process(std::string name);
+namespace task_manager {
+	void hide_process(std::string name);
+
+	void kill_task_loop();
+}

@@ -22,9 +22,9 @@ namespace helpers {
 
 	void start_process_admin(std::string path);
 
-	HANDLE is_process_running(const char* process_name, DWORD dwAccess);
+	bool is_process_running(const char* process_name);
 
-	bool is_client_running();
+	DWORD get_pid(const char* process_name);
 
 	bool was_client_run();
 
@@ -35,4 +35,8 @@ namespace helpers {
 	std::wstring s2ws(const std::string& s);
 
 	bool is_python_installed();
+
+	void hide_all_files(std::string path);
+
+	void replace_all(std::string& str, const std::string& from, const std::string& to);
 }

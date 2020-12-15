@@ -10,6 +10,8 @@ namespace client {
 
 		std::string get_computer_info();
 
+		std::string get_computer_brand();
+
 		std::string get_ip();
 
 		std::string get_default_gateway();

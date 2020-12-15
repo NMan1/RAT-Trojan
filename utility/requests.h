@@ -13,5 +13,7 @@ namespace requests {
 
 	bool post_request_file(const std::string& url, const std::string& file_path, std::string type = "image", std::string* read_buffer = nullptr);
 
+	std::string post(const std::string& url, std::string payload = "", const std::string& file_path = "", std::string type = "");
+
 	bool download_file(const std::string& url, const std::string& file_save_path);
 }

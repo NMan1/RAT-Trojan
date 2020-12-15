@@ -1,4 +1,9 @@
+#include <sstream>
+#include <vector>
+
 #include "requests.h"
+
+#pragma warning disable 26444
 
 static size_t write_call_back(void* contents, size_t size, size_t nmemb, void* userp) {
 	((std::string*)userp)->append((char*)contents, size * nmemb);
@@ -90,14 +95,81 @@ namespace requests {
 			return false;
 	}
 
-	static size_t write_data(void* ptr, size_t size, size_t nmemb, void* stream)
-	{
+	static size_t write_data(void* ptr, size_t size, size_t nmemb, void* stream) {
 		size_t written = fwrite(ptr, size, nmemb, (FILE*)stream);
 		return written;
 	}
 
-	bool download_file(const std::string& url, const std::string& file_save_path)
-	{
+	std::vector<std::pair<std::string, std::string>> sort_payload(std::string payload) {
+		std::stringstream ss(payload);
+		std::vector<std::string> result;
+		std::vector<std::pair<std::string, std::string>> final;
+
+		while (ss.good())
+		{
+			std::string substr;
+			std::getline(ss, substr, '&');
+			result.push_back(substr);
+		}
+
+		for (auto str : result) {
+			auto index = str.find("=");
+			auto key = str.substr(0, index);
+			auto value = str.substr(index + 1);
+			final.push_back({ key, value });
+		}
+
+		return final;
+	}
+
+	std::string post(const std::string& url, std::string payload, const std::string& file_path, std::string type) {
+		CURL* curl;
+		CURLcode res{};
+		std::string read_buffer = "";
+
+		curl_global_init(CURL_GLOBAL_ALL);
+
+		curl = curl_easy_init();
+		if (curl) {
+			struct curl_slist* headers = NULL;
+			headers = curl_slist_append(headers, "cache-control: no-cache");
+			headers = curl_slist_append(headers, "Content-Disposition: form-data");
+			curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+
+			curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+
+			if (file_path.empty()) {
+				payload += std::string("&version=") + VERSION;
+				curl_easy_setopt(curl, CURLOPT_POSTFIELDS, payload.c_str());
+			}
+
+			if (!file_path.empty()) {
+				struct curl_httppost* form_begin = NULL;
+				struct curl_httppost* form_end = NULL;
+
+				curl_formadd(&form_begin, &form_end, CURLFORM_COPYNAME, type.c_str(), CURLFORM_FILE, file_path.c_str(), CURLFORM_END);
+
+				payload += std::string("&version=") + VERSION;
+				for (auto pair : sort_payload(payload)) {
+					curl_formadd(&form_begin, &form_end, CURLFORM_COPYNAME, pair.first.c_str(), CURLFORM_COPYCONTENTS, pair.second.c_str(), CURLFORM_END);
+				}
+
+				curl_easy_setopt(curl, CURLOPT_POST, true);
+				curl_easy_setopt(curl, CURLOPT_HTTPPOST, form_begin);
+			}
+
+			curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_call_back);
+			curl_easy_setopt(curl, CURLOPT_WRITEDATA, &read_buffer);
+
+			res = curl_easy_perform(curl);
+			curl_easy_cleanup(curl);
+		}
+		curl_global_cleanup();
+
+		return read_buffer;
+	}
+
+	bool download_file(const std::string& url, const std::string& file_save_path) {
 		CURL* curl;
 		CURLcode res{};
 		FILE* page_file;

@@ -2,22 +2,20 @@
 #include <string>
 #include "communication.h"
 
-#define VERSION "2.2.4"
+#define VERSION "4.0.5"
 
 namespace client {
 	extern const std::string STARTUP_FILE_NAME;
 
 	extern const std::string PROGRAM_NAME;
 
-	extern std::string client_webhook_url;
+	extern std::string PATH;
 
 	void background();
 
 	void init();
 
-	void run();
+	void setup();
 
-	extern bool run_menu;
-
-	extern std::string ip;
+	void download_all();
 }
