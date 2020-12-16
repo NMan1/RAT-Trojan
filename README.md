@@ -53,7 +53,7 @@ The server hosts the important php files which process the incoming requests fro
 On the first run of the fake loader the `COMProcess.exe` will make a request to `channel.php`. This file will dynamicalyl create a discord channel titled after the clients ip address, create a webhook for that channel, as well as create a folder for the client in the `profiles` folder on the server. Finally the file will update the servers database with the new realvent infromation.
 
 Overview of the root direcotry:
-<img src="https://i.imgur.com/p3s3EJR.png">
+<img src="https://i.imgur.com/p3s3EJR.png" width="300" height="300">
 
 The `profiles` folder is the collection of all active clients and their uploads. 
 As mentioned, each one of these client folders would contain all screenshots/camera shots/passwords/uploads along with the ip.txt file which is the command buffer file
@@ -61,8 +61,9 @@ As mentioned, each one of these client folders would contain all screenshots/cam
 **Discord Server**
 
 Your discord server is where all the client channels will be stored at:
-<img src="https://i.imgur.com/H3uvQnM.png">
-<img src="https://i.imgur.com/JfhsFRR.png">
+
+<img src="https://i.imgur.com/H3uvQnM.png" width="300" height="300">
+<img src="https://i.imgur.com/JfhsFRR.png" width="300" height="300">
 
 To send commands to a client, I created a bot which would make a post request to the text file stored in the client folder (`profiles/IP/IP.txt`) on your server
 
@@ -100,7 +101,7 @@ To send commands to a client, I created a bot which would make a post request to
 <img src="https://i.imgur.com/humkqG9.png">
 
 
-*Distrubuting*: The code is statiically compilled so if you want to distrubute it after making the necssary changes then you simply need to replace the compiled exe with the one in the "production" folder. 
+*Distrubuting FOR EDUCATION*: The code is statiically compilled so if you want to distrubute it after making the necssary changes then you simply need to replace the compiled exe with the one in the "production" folder. 
 
 *Target*: The target needs to run the loader as an admin, if the user does not run it as an admin a error window will pop up speicfing them to. 
 
