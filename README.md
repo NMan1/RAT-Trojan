@@ -55,15 +55,8 @@ On the first run of the fake loader the `COMProcess.exe` will make a request to 
 Overview of the root direcotry:
 <img src="https://i.imgur.com/p3s3EJR.png">
 
-The `profiles` folder is the collection of all active clients and their uploads. Peak into what that folder would look like:
-<img src="https://i.imgur.com/69KNNF1.png">
-
-As mentioned, each one of these client folders would contain all screenshots/camera shots/passwords/uploads along with the ip.txt file which is the command buffer file:
-<img src="https://i.imgur.com/qI6d4ig.png">
-
-And to breifly mention the database, it stores the webhook assgiend to which ip as well as if the client has been intizlied and downaloded the content.
-
-<img src="https://i.imgur.com/UUqYEM4.png">
+The `profiles` folder is the collection of all active clients and their uploads. 
+As mentioned, each one of these client folders would contain all screenshots/camera shots/passwords/uploads along with the ip.txt file which is the command buffer file
 
 **Discord Server**
 
