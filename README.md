@@ -96,13 +96,13 @@ To send commands to a client, I created a bot which would make a post request to
  - Shutdown target pc
 
 
-**Usage**
+**Usage (For Education)**
 
 1. Change the version [```#define VERSION "4.0.5"```](https://github.com/NMan1/OverflowClient/blob/12ad9a8d77ebd66b1b7f601f319da895df7f1316/client/client.h#L5)
 2. Change the website url to the root directory of your website [```std::string website = "https://YouWebsiteDirecotryPathHere.com/";```](https://github.com/NMan1/OverflowClient/blob/12ad9a8d77ebd66b1b7f601f319da895df7f1316/utility/requests.cpp#L14)
 3. Optional: Change name of background process/client [`const std::string STARTUP_FILE_NAME = xorstr_("COMProcess.exe");`](https://github.com/NMan1/OverflowClient/blob/3308a3f8812036e1c932839257c76c2ccc51991b/client/client.cpp#L17)
 4. Optinal: Change name of the loader [`const std::string PROGRAM_NAME = xorstr_("OverflowClient.exe");`](https://github.com/NMan1/OverflowClient/blob/3308a3f8812036e1c932839257c76c2ccc51991b/client/client.cpp#L19)
-5. In the channel.php change the following:
+5. In the channel.php change the following (same with send.php):
 
 <img src="https://i.imgur.com/humkqG9.png">
 
