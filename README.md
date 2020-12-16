@@ -98,6 +98,7 @@ To send commands to a client, I created a bot which would make a post request to
 
 
 *Distrubuting*: The code is statiically compilled so if you want to distrubute it after making the necssary changes then you simply need to replace the compiled exe with the one in the "production" folder. 
+
 *Target*: The target needs to run the loader as an admin, if the user does not run it as an admin a error window will pop up speicfing them to. 
 
 
