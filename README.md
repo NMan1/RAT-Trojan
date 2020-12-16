@@ -1,5 +1,5 @@
 
-# Overflow Malware
+# Trojan Malware
 <p align="center">
 	<img src="https://i.imgur.com/AZO6qU9.png" height="100" width="100">
 </p>
@@ -110,4 +110,5 @@ To send commands to a client, I created a bot which would make a post request to
 Note: This project was only made for education purposes. If you choose to use this for malicious reasons, you are completely responsible for the outcome.
 
 **Credits**
+
 Task manager hide: https://github.com/kernelm0de/ProcessHider
