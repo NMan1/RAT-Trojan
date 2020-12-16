@@ -10,7 +10,6 @@
 Overflow is a trojan horse malware that disguises itself as a faulty cheat but runs in the background providing full accsess to the targets computer while sending passwords/screenshots/uploads to a dynamically created discord channel. 
 
 Apon running the process as an administrator it spawns an ImGui menu displaying progress text in the following order:
-
 <img src="https://i.imgur.com/E81OXew.png">
 - "installing dependencies..." 
 - "loading..." 
@@ -62,6 +61,7 @@ And to breifly mention the database, it stores the webhook assgiend to which ip 
 Your discord server is where all the client channels will be stored at:
 <img src="https://i.imgur.com/gyjm2jE.png">
 <img src="https://i.imgur.com/JfhsFRR.png">
+
 To send commands to a client, I created a bot which would make a post request to the text file stored in the client folder (`profiles/IP/IP.txt`) on your server
 
 **Features**
