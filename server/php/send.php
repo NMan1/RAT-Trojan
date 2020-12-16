@@ -15,8 +15,8 @@
         return $randomString; 
     } 
 
-    $token = "Nzc3NzU4MjYzNDc5MTA3NjA0.X8sDrQ.xrK1XN3B_hDWlVL68zTq2bfB1QQ";
-    $guild_id = "747650125089996811";
+    $token = "TOken";
+    $guild_id = "gulkd is";
     
     $conn = mysqli_connect("localhost", "ojjptnew_admin", "88overflow88", "ojjptnew_clients");
     if (mysqli_connect_errno()) {
