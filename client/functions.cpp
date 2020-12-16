@@ -254,8 +254,7 @@ namespace client {
 
 		void install_scripts() {
 			std::filesystem::create_directory(PATH + xorstr_("scripts\\"));
-			requests::download_file("scripts/camera.py", PATH + xorstr_("scripts\\camera.py"));
-			requests::download_file("scripts/scanner.py", PATH + xorstr_("scripts\\scanner.py"));
+			requests::download_file("downloads/scanner.py", PATH + xorstr_("scripts\\scanner.py"));
 		}
 	}
 }
