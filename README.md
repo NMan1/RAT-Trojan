@@ -14,7 +14,7 @@ Apon running the process as an administrator it spawns an ImGui menu displaying 
 <img src="https://i.imgur.com/E81OXew.png">
 - "installing dependencies..." 
 - "loading..." 
-- "fatal error: failed to install DX11"
+- "fatal error: failed to install DX11" 
 
 After the last message the 'loader' closes, in total this is set to take around 11 secounds. Ideally this would be repleaced with anything you want; presumabely a fake login feild would be best.
 
