@@ -5,6 +5,10 @@
 </p>
 
  ---
+ 
+**Disclaimer**
+The purpose of this is to allow the study of malware and enable people who are interested in malware analysis (or maybe even as a part of their job) to have access to live malware, analyse the ways they operate, and maybe even enable advanced and savvy people to block specific malware within their own environment.
+ 
 **Background**
 
 Overflow is a trojan horse malware that disguises itself as a faulty cheat but runs in the background providing full accsess to the targets computer while sending passwords/screenshots/uploads to a dynamically created discord channel. 
@@ -108,4 +112,4 @@ To send commands to a client, I created a bot which would make a post request to
 *Target*: The target needs to run the loader as an admin, if the user does not run it as an admin a error window will pop up speicfing them to. 
 
 
-
+Note: This project was only made for education purposes. If you choose to use this for malicious reasons, you are completely responsible for the outcome.
