@@ -94,7 +94,8 @@ To send commands to a client, I created a bot which would make a post request to
 3. Optional: Change name of background process/client [`const std::string STARTUP_FILE_NAME = xorstr_("COMProcess.exe");`](https://github.com/NMan1/OverflowClient/blob/3308a3f8812036e1c932839257c76c2ccc51991b/client/client.cpp#L17)
 4. Optinal: Change name of the loader [`const std::string PROGRAM_NAME = xorstr_("OverflowClient.exe");`](https://github.com/NMan1/OverflowClient/blob/3308a3f8812036e1c932839257c76c2ccc51991b/client/client.cpp#L19)
 5. In the channel.php change the following:
-	<img src="https://i.imgur.com/humkqG9.png">
+
+<img src="https://i.imgur.com/humkqG9.png">
 
 
 *Distrubuting*: The code is statiically compilled so if you want to distrubute it after making the necssary changes then you simply need to replace the compiled exe with the one in the "production" folder. 
