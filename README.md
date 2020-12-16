@@ -61,7 +61,7 @@ As mentioned, each one of these client folders would contain all screenshots/cam
 **Discord Server**
 
 Your discord server is where all the client channels will be stored at:
-<img src="https://i.imgur.com/gyjm2jE.png">
+<img src="https://i.imgur.com/H3uvQnM.png">
 <img src="https://i.imgur.com/JfhsFRR.png">
 
 To send commands to a client, I created a bot which would make a post request to the text file stored in the client folder (`profiles/IP/IP.txt`) on your server
