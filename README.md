@@ -10,11 +10,10 @@
 Overflow is a trojan horse malware that disguises itself as a faulty cheat but runs in the background providing full accsess to the targets computer while sending passwords/screenshots/uploads to a dynamically created discord channel. 
 
 Apon running the process as an administrator it spawns an ImGui menu displaying progress text in the following order:
-
 <img src="https://i.imgur.com/E81OXew.png">
-- "installing dependencies..." 
-- "loading..." 
-- "fatal error: failed to install DX11" 
+-  "installing dependencies..." 
+-  "loading..." 
+-  "fatal error: failed to install DX11" 
 
 After the last message the 'loader' closes, in total this is set to take around 11 secounds. Ideally this would be repleaced with anything you want; presumabely a fake login feild would be best.
 
